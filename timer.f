@@ -19,4 +19,9 @@ VARIABLE LAST_TIME
 
 \ Delay by a certain amount of time.
 : DELAY ( delay_amount_in_us -- )
-    TIMER START BEGIN DUP TIMER STOP < UNTIL DROP ;
+    TIMER START 
+    BEGIN 
+        DUP 
+        TIMER STOP 
+        < 
+    UNTIL DROP ;

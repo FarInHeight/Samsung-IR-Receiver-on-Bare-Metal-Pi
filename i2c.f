@@ -74,7 +74,16 @@ BSC1 PERI_BASE + 1C +   CONSTANT CLKT
 \ - ST (7) set to 1 to start a new transfer (one-shot operation);
 \ - CLEAR (5:4) set to X1 or 1X in order to clear the FIFO before the new frame is started.
 \ Interrupts are disabled.
-: SUBMIT ( -- )
+: TRANSFER ( -- )
     8090 C ! ;
+
+\ Data transfer through the I2C bus interface.
+\ Since communication is established to the LCD panel, 8 bits at a time are sent.
+: SEND
+    RESET_STATUS
+    1 SET_DLEN
+    SET_SLAVE
+    APPEND
+    TRANSFER ;
 
 
