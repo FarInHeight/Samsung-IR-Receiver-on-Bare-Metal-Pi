@@ -67,17 +67,17 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ - I2CEN (15) set to 1 to enable the BSC controller;
 \ - ST (7) set to 1 to start a new transfer (one-shot operation).
 \ Interrupts are disabled.
-: TRANSFER ( -- )
+: SET_TRANSFER ( -- )
     8080 C ! ;
 
 \ Data transfer through the I2C bus interface.
 \ Since communication is established to the LCD panel, 8 bits at a time are sent.
-: SEND
+: TO_I2C
     RESET_STATUS
     CLEAR_FIFO
     1 SET_DLEN
     APPEND
-    TRANSFER ;
+    SET_TRANSFER ;
 
 \ Setup the I2C bus interface and the slave address.
 \ Configure GPIO pin 2 for Serial Data Line.
@@ -88,18 +88,49 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
     3 ALT0 CONFIGURE
     27 SET_SLAVE ;
 
-: 4BM>LCD 
-  F0 AND DUP ROT
-  D + OR SEND 1000 DELAY
-  8 OR SEND 1000 DELAY ;
+\ Consider the following structure of data transfer:
+\           D7 D6 D5 D4 Backlight Enable Read/Write Register-Select
+\ equivalently:
+\           D7 D6 D5 D4 BL EN RW RS
+\ In order to send a byte, it must be decomposed in two nibbles, upper nibble and lower
+\ nibble. Each nibble represented by D7 D6 D5 D4 must be followed by a combination of
+\ BL EN RW RS.
+\ For each data or command to transfer RW = 0.
+\ Given a byte B = HIGH LOW (upper-nibble lower-nibble), if it is part of a command,
+\ then transfer is obtained by sending:
+\   HIGH 1 1 0 0 -> HIGH 1 0 0 0 -> LOW 1 1 0 0 -> LOW 1 0 0 0
+\ If it part of a data transfer then:
+\   HIGH 1 1 0 1 -> HIGH 1 0 0 0 -> LOW 1 1 0 1 -> LOW 1 0 0 0
+\ RS is equal to 0 for instruction input and it is equal to 1 for data input.
 
-: >LCDM
-  OVER OVER F0 AND 4BM>LCD
-  F AND 4 LSHIFT 4BM>LCD ;
 
-: IS_CMD 
-  DUP 8 RSHIFT 1 = ;
+\ Returns setting parts to be sent based on a truth value that indicates whether the input
+\ is part of a command or data.
+: SETTINGS ( truth_value -- first_setting second_setting )
+    IF 
+        0C 08
+    ELSE 
+        0D 08
+    THEN ;
 
-: >LCD 
-  IS_CMD SWAP >LCDM 
-;
+\ Returns a nipple aggregated with the first setting part and the second setting part.
+: AGGREGATE ( settings byte -- nipple_second_setting nipple_first_setting )
+    4 LSHIFT DUP ROT OR -ROT OR ;
+
+\ Divides a byte into two nipples.
+: BYTE_TO_NIPPLES ( byte -- lower_nipple upper_nipple )
+    DUP 0F AND SWAP 4 RSHIFT 0F AND ;
+
+\ Send a nipple to LCD aggregated with settings.
+: SEND_NIPPLE ( nipple truth_value -- )
+    SETTINGS ROT
+    AGGREGATE
+    TO_I2C 1000 DELAY
+    TO_I2C 1000 DELAY ;
+
+\ Trasmits input to LCD given an instruction or data.
+: TO_LCD ( input -- )
+    DUP 8 WORD_TO_BIT >R
+    BYTE_TO_NIPPLES R@
+    SEND_NIPPLE R>
+    SEND_NIPPLE ;

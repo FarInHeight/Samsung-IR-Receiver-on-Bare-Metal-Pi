@@ -1,53 +1,53 @@
-\ Change base from decimal to hex.
+\ Changes base from decimal to hex.
 HEX
 
-\ Create constant for peripherals base memory address.
+\ Creates constant for peripherals base memory address.
 FE000000    CONSTANT PERI_BASE
 
-\ Create constant for offset GPIO registers base address.
+\ Creates constant for offset GPIO registers base address.
 200000      CONSTANT GPIO_OFFSET
 
-\ Create constant for offset GPIO output set register.
+\ Creates constant for offset GPIO output set register.
 1C          CONSTANT GPIO_SET_OFFSET
 
-\ Create constant for offset GPIO output clear register.
+\ Creates constant for offset GPIO output clear register.
 28          CONSTANT GPIO_CLR_OFFSET
 
-\ Create constant for offset GPIO pin level registers.
+\ Creates constant for offset GPIO pin level registers.
 34          CONSTANT GPIO_LEV_OFFSET
 
-\ Create constant for input function.
+\ Creates constant for input function.
 00          CONSTANT INPUT
 
-\ Create constant for output function.
+\ Creates constant for output function.
 01          CONSTANT OUTPUT
 
-\ Create constant for alternate function 0.
+\ Creates constant for alternate function 0.
 04          CONSTANT ALT0
 
-\ Create constant for alternate function 1.
+\ Creates constant for alternate function 1.
 05          CONSTANT ALT1
 
-\ Create constant for alternate function 2.
+\ Creates constant for alternate function 2.
 06          CONSTANT ALT2
 
-\ Create constant for alternate function 3.
+\ Creates constant for alternate function 3.
 07          CONSTANT ALT3
 
-\ Create constant for alternate function 4.
+\ Creates constant for alternate function 4.
 03          CONSTANT ALT4
 
-\ Create constant for alternate function 5.
+\ Creates constant for alternate function 5.
 02          CONSTANT ALT5
 
-\ Create constant for GPIO register base address.
+\ Creates constant for GPIO register base address.
 PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 
-\ Fetch the content of the return stack.
+\ Fetches the content of the return stack.
 : R@ ( -- top_of_return_stack )
     R> R> TUCK >R >R ;
 
-\ Multiply a number by 4 to refer to word offsets.
+\ Multiplies a number by 4 to refer to word offsets.
 : TO_WORD ( number -- word_aligned_number )
     02 LSHIFT ;
 
@@ -55,7 +55,7 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 : GPFSEL ( gpio_pin_number -- gpio_pin_address )
     0A / TO_WORD GPIO_BASE + ;
 
-\ Create mask for a given GPIO pin.
+\ Creates mask for a given GPIO pin.
 : MASK ( gpio_pin_number -- mask )
     0A MOD DUP 01 LSHIFT + 07 SWAP LSHIFT INVERT ;
 
@@ -63,7 +63,7 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 : CONFIGURATION ( functionality_number gpio_pin_number -- configuration_for_GPFSEL )
     0A MOD DUP 01 LSHIFT + LSHIFT ;
 
-\ Configure a specific functionality for a GPIO pin given its number and the functionality in 0-7.
+\ Configures a specific functionality for a GPIO pin given its number and the functionality in 0-7.
 : CONFIGURE ( gpio_pin_number functionality_number -- )
     SWAP DUP GPFSEL >R DUP MASK R@ @ AND -ROT CONFIGURATION OR R> ! ;
 
@@ -83,11 +83,11 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 : WORD_TO_BIT ( bit_word bit_number -- bit_value )
     RSHIFT 01 AND ;
 
-\ Set a GPIO output high for a given GPIO pin.
+\ Sets a GPIO output high for a given GPIO pin.
 : HIGH ( gpio_pin_number -- )
     DUP BIT_TO_WORD SWAP GPSET ! ;
 
-\ Set a GPIO output low for a given GPIO pin.
+\ Sets a GPIO output low for a given GPIO pin.
 : LOW ( gpio_pin_number -- )
     DUP BIT_TO_WORD SWAP GPCLR ! ;
 
