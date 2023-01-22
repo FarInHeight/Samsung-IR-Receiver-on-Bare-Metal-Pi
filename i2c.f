@@ -128,7 +128,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
     TO_I2C 1000 DELAY
     TO_I2C 1000 DELAY ;
 
-\ Trasmits input to LCD given an instruction or data.
+\ Transmits input to LCD given an instruction or data.
 : TO_LCD ( input -- )
     DUP 8 WORD_TO_BIT >R
     BYTE_TO_NIPPLES R@
