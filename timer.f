@@ -2,7 +2,7 @@
 3000 CONSTANT TIMER_OFFSET
 
 \ Create constant for the System Timer Counter Lower bits.
-PERI_BASE TIMER_OFFSET + 4 +    CONSTANT TIMER
+PERI_BASE TIMER_OFFSET + 04 +    CONSTANT TIMER
 
 \ Create variabile to store last time read.
 VARIABLE LAST_TIME

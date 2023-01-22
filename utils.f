@@ -17,33 +17,51 @@ FE000000    CONSTANT PERI_BASE
 34          CONSTANT GPIO_LEV_OFFSET
 
 \ Create constant for input function.
-0           CONSTANT INPUT
+00          CONSTANT INPUT
 
 \ Create constant for output function.
-1           CONSTANT OUTPUT
+01          CONSTANT OUTPUT
+
+\ Create constant for alternate function 0.
+04          CONSTANT ALT0
+
+\ Create constant for alternate function 1.
+05          CONSTANT ALT1
+
+\ Create constant for alternate function 2.
+06          CONSTANT ALT2
+
+\ Create constant for alternate function 3.
+07          CONSTANT ALT3
+
+\ Create constant for alternate function 4.
+03          CONSTANT ALT4
+
+\ Create constant for alternate function 5.
+02          CONSTANT ALT5
 
 \ Create constant for GPIO register base address.
 PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 
 \ Fetch the content of the return stack.
 : R@ ( -- top_of_return_stack )
-    R> DUP >R ;
+    R> R> TUCK >R >R ;
 
 \ Multiply a number by 4 to refer to word offsets.
 : TO_WORD ( number -- word_aligned_number )
-    2 LSHIFT ;
+    02 LSHIFT ;
 
 \ Returns GPFSEL register address for a given GPIO pin.
 : GPFSEL ( gpio_pin_number -- gpio_pin_address )
-    A / TO_WORD GPIO_BASE + ;
+    0A / TO_WORD GPIO_BASE + ;
 
 \ Create mask for a given GPIO pin.
 : MASK ( gpio_pin_number -- mask )
-    A MOD DUP 1 LSHIFT + 7 SWAP LSHIFT INVERT ;
+    0A MOD DUP 01 LSHIFT + 07 SWAP LSHIFT INVERT ;
 
 \ Returns a configuration for a GPFSEL content update given a functionality in 0-7 and a GPIO pin number.
 : CONFIGURATION ( functionality_number gpio_pin_number -- configuration_for_GPFSEL )
-    A MOD DUP 1 LSHIFT + LSHIFT ;
+    0A MOD DUP 01 LSHIFT + LSHIFT ;
 
 \ Configure a specific functionality for a GPIO pin given its number and the functionality in 0-7.
 : CONFIGURE ( gpio_pin_number functionality_number -- )
@@ -59,11 +77,11 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 
 \ Returns a 32 bit word with just one bit high in the proper positon for a GPIO pin.
 : BIT_TO_WORD ( gpio_pin_number -- bit_word )
-    20 MOD 1 SWAP LSHIFT ;
+    20 MOD 01 SWAP LSHIFT ;
 
 \ Returns 0 or 1 depending on the value of the bit a given position of a given 32 bit word.
 : WORD_TO_BIT ( bit_word bit_number -- bit_value )
-    RSHIFT 1 AND ;
+    RSHIFT 01 AND ;
 
 \ Set a GPIO output high for a given GPIO pin.
 : HIGH ( gpio_pin_number -- )
