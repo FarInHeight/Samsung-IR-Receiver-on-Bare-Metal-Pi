@@ -6,4 +6,5 @@ cat jonesforth.f    \
     utils.f         \
     timer.f         \
     i2c.f           \
+    lcd.f           \
     | ./unify_and_uncomment.py
