@@ -7,4 +7,5 @@ cat jonesforth.f    \
     timer.f         \
     i2c.f           \
     lcd.f           \
+    ir_receiver.f   \
     | ./unify_and_uncomment.py

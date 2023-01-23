@@ -72,7 +72,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 
 \ Data transfer through the I2C bus interface.
 \ Since communication is established to the LCD panel, 8 bits at a time are sent.
-: TO_I2C
+: >I2C
     RESET_STATUS
     CLEAR_FIFO
     1 SET_DLEN
@@ -118,19 +118,19 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
     4 LSHIFT DUP ROT OR -ROT OR ;
 
 \ Divides a byte into two nipples.
-: BYTE_TO_NIPPLES ( byte -- lower_nipple upper_nipple )
+: BYTE>NIPPLES ( byte -- lower_nipple upper_nipple )
     DUP 0F AND SWAP 4 RSHIFT 0F AND ;
 
 \ Send a nipple to LCD aggregated with settings.
 : SEND_NIPPLE ( nipple truth_value -- )
     SETTINGS ROT
     AGGREGATE
-    TO_I2C 1000 DELAY
-    TO_I2C 1000 DELAY ;
+    >I2C 1000 DELAY
+    >I2C 1000 DELAY ;
 
 \ Transmits input to LCD given an instruction or data.
-: TO_LCD ( input -- )
-    DUP 8 WORD_TO_BIT >R
-    BYTE_TO_NIPPLES R@
+: >LCD ( input -- )
+    DUP 8 WORD>BIT >R
+    BYTE>NIPPLES R@
     SEND_NIPPLE R>
     SEND_NIPPLE ;

@@ -8,30 +8,30 @@
 \ By sending this command to the LCD, we set up the data interface to 4 bits, instead
 \ of 8 bits.
 : LCD_SETUP ( -- )
-    102 TO_LCD ;
+    102 >LCD ;
 
 \ The following words can be used only after the LCD has been set up.
 
 \ Clears the LCD display.
 : CLEAR_DISPLAY ( -- )
-    101 TO_LCD ;
+    101 >LCD ;
 
 \ Moves the cursor to the first cell in the first row of the LCD display.
 \ It stands for Return Home Line 1.
 : RH_LINE1 ( -- )
-    102 TO_LCD ;
+    102 >LCD ;
 
 \ Returns the cursor to the first cell in the second row of the LCD display.
 \ It stands for Return Home Line 2.
 : RH_LINE2 ( -- )
-    1C0 TO_LCD ;
+    1C0 >LCD ;
 
 \ Prints a string to the LCD. 
 \ Usage: S" embedded systems" PRINT_STRING
 : PRINT_STRING ( address length -- )
     OVER + SWAP
     BEGIN
-        DUP C@ TO_LCD
+        DUP C@ >LCD
         1+
         2DUP =
     UNTIL 2DROP ;
@@ -54,6 +54,6 @@
     WHILE
         2DUP RSHIFT
         0F AND 
-        HEX_TO_ASCII TO_LCD
+        HEX_TO_ASCII >LCD
         04 -
     REPEAT 2DROP ;
