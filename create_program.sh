@@ -8,4 +8,6 @@ cat jonesforth.f    \
     i2c.f           \
     lcd.f           \
     ir_receiver.f   \
+    lookup_table.f  \
+    main.f          \
     | ./unify_and_uncomment.py

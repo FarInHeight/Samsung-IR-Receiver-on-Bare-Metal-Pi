@@ -1,11 +1,11 @@
-\ Creates constant for IR receiver GPIO pin
+\ Creates constant for IR receiver GPIO pin.
 19 CONSTANT RECEIVER
 
 \ Creates variable to store the sampled command.
-VARIABLE COMMAND_HEX
+VARIABLE COMMAND
 
 \ Sets up receiver by configuring its GPIO pin as input.
-: RECEIVER_SETUP ( -- )
+: INIT_RECEIVER ( -- )
     RECEIVER INPUT CONFIGURE ;
 
 \ Returns -1 is a value in contained within an interval, 0 otherwise.
@@ -64,13 +64,13 @@ VARIABLE COMMAND_HEX
 \ Add a new bit to the command sampled.
 \ If value is -1 then add a 0, 1 otherwise.
 : ADD_BIT ( value -- )
-    COMMAND_HEX @ 
+    COMMAND @ 
     1 LSHIFT SWAP
     1 =
     IF
         01 OR
     THEN 
-    COMMAND_HEX ! ;
+    COMMAND ! ;
 
 \ Detects if a stop bit arrives.
 \ -1 is left on the stack if a stop bit is detected, 0 otherwise.
@@ -94,7 +94,7 @@ VARIABLE COMMAND_HEX
 \ Samples a command sent to the receiver.
 \ If command detection fails then 0 is returned.
 : DETECT_COMMAND ( -- command_hex )
-    0 COMMAND_HEX !
+    0 COMMAND !
     RECEIVER START_BIT
     NOT IF
         0 EXIT
@@ -113,4 +113,4 @@ VARIABLE COMMAND_HEX
     REPEAT
     DROP
     RECEIVER STOP_BIT
-    COMMAND_HEX @ ;
+    COMMAND @ ;

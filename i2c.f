@@ -67,7 +67,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ - I2CEN (15) set to 1 to enable the BSC controller;
 \ - ST (7) set to 1 to start a new transfer (one-shot operation).
 \ Interrupts are disabled.
-: SET_TRANSFER ( -- )
+: TRANSFER ( -- )
     8080 C ! ;
 
 \ Data transfer through the I2C bus interface.
@@ -77,13 +77,13 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
     CLEAR_FIFO
     1 SET_DLEN
     APPEND
-    SET_TRANSFER ;
+    TRANSFER ;
 
 \ Setup the I2C bus interface and the slave address.
 \ Configure GPIO pin 2 for Serial Data Line.
 \ Configure GPIO pin 3 for Serial Clock Line.
 \ Set the slave address to 0x27.
-: I2C_SETUP
+: INIT_I2C
     2 ALT0 CONFIGURE
     3 ALT0 CONFIGURE
     27 SET_SLAVE ;

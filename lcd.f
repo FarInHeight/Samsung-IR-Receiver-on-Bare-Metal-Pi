@@ -7,7 +7,7 @@
 \ Sets up the LCD.
 \ By sending this command to the LCD, we set up the data interface to 4 bits, instead
 \ of 8 bits.
-: LCD_SETUP ( -- )
+: INIT_LCD ( -- )
     102 >LCD ;
 
 \ The following words can be used only after the LCD has been set up.
@@ -37,7 +37,7 @@
     UNTIL 2DROP ;
 
 \ Converts a 4-bit hexadecimal number to the corrisponding ASCII code.
-: HEX_TO_ASCII ( 4_bit_number -- ascii_code )
+: HEX>ASCII ( 4_bit_number -- ascii_code )
     DUP 09 >
     IF
         0A -
@@ -54,6 +54,6 @@
     WHILE
         2DUP RSHIFT
         0F AND 
-        HEX_TO_ASCII >LCD
+        HEX>ASCII >LCD
         04 -
     REPEAT 2DROP ;
