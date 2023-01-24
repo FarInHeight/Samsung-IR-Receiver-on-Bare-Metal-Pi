@@ -23,7 +23,7 @@ VARIABLE LAST_COMMAND
     RH_LINE2
     S" a command... "       PRINT_STRING ; 
 
-\ The main program. It is consists of a loop that prints a new command each time
+\ The main program. It consists of a loop that prints a new command each time
 \ one is encountered.
 \ It prints the command in hexadecimal form in the first line of the LCD and its string 
 \ equivalent in the second line.
