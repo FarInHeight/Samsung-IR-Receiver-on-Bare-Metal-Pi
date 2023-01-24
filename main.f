@@ -1,7 +1,7 @@
 \ Creates variable to store the last sampled command.
 VARIABLE LAST_COMMAND
 
-\ Welcome quote to begin start the program.
+\ Welcome quote to start the program.
 : QUOTE ( -- )
     S" `Learning never "    PRINT_STRING
     RH_LINE2
