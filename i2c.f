@@ -113,16 +113,16 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
         0D 08
     THEN ;
 
-\ Returns a nipple aggregated with the first setting part and the second setting part.
-: AGGREGATE ( settings byte -- nipple_second_setting nipple_first_setting )
+\ Returns a nibble aggregated with the first setting part and the second setting part.
+: AGGREGATE ( settings byte -- nibble_second_setting nibble_first_setting )
     4 LSHIFT DUP ROT OR -ROT OR ;
 
-\ Divides a byte into two nipples.
-: BYTE>NIPPLES ( byte -- lower_nipple upper_nipple )
+\ Divides a byte into two nibbles.
+: BYTE>NIBBLES ( byte -- lower_nibble upper_nibble )
     DUP 0F AND SWAP 4 RSHIFT 0F AND ;
 
-\ Send a nipple to LCD aggregated with settings.
-: SEND_NIPPLE ( nipple truth_value -- )
+\ Send a nibble to LCD aggregated with settings.
+: SEND_NIBBLE ( nibble truth_value -- )
     SETTINGS ROT
     AGGREGATE
     >I2C 1000 DELAY
@@ -131,6 +131,6 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ Transmits input to LCD given an instruction or data.
 : >LCD ( input -- )
     DUP 8 WORD>BIT >R
-    BYTE>NIPPLES R@
-    SEND_NIPPLE R>
-    SEND_NIPPLE ;
+    BYTE>NIBBLES R@
+    SEND_NIBBLE R>
+    SEND_NIBBLE ;
