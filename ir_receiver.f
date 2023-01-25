@@ -1,6 +1,18 @@
 \ Creates constant for IR receiver GPIO pin.
 19 CONSTANT RECEIVER
 
+\ Creates constant for lower bound time for a START_BIT detection (4.35 ms).
+10FE CONSTANT LB_START_BIT
+
+\ Creates constant for upper bound time for a START_BIT detection (4.35 ms).
+122A CONSTANT UB_START_BIT
+
+\ Creates constant for lower bound time for a 0 bit detection (0.56 ms).
+1B8 CONSTANT LB_0_BIT
+
+\ Creates constant for upper bound time for a 0 bit detection (0.56 ms).
+2A8 CONSTANT UB_0_BIT
+
 \ Creates variable to store the sampled command.
 VARIABLE COMMAND
 
@@ -35,9 +47,9 @@ VARIABLE COMMAND
         0=
     UNTIL
     DUP 00 AWAIT
-    10FE 122A IN_RANGE
+    LB_START_BIT UB_START_BIT IN_RANGE
     OVER 01 AWAIT
-    10FE 122A IN_RANGE 
+    LB_START_BIT UB_START_BIT IN_RANGE 
     AND NIP ;
 
 
@@ -48,12 +60,12 @@ VARIABLE COMMAND
 \ A 1 is detected if after a transition from HIGH to LOW, LOW is held for 0.56 ms and 
 \ after a transition from LOW to HIGH, HIGH is held for 1.69 ms.
 \ Since perfect timing cannot be achieved, I sample a timing contained within 0.44 ms and 0.68 ms.
-\ Usage: RECEIVER DETECTED_BIT
+\ Usage: RECEIVER DETECT_BIT
 : DETECT_BIT ( receiver -- sampled_value )
     DUP 00 AWAIT
-    1B8 2A8 IN_RANGE
+    LB_0_BIT UB_0_BIT IN_RANGE
     OVER 01 AWAIT
-    1B8 2A8 IN_RANGE
+    LB_0_BIT UB_0_BIT IN_RANGE
     IF
         -1
     ELSE
@@ -81,7 +93,7 @@ VARIABLE COMMAND
 : STOP_BIT ( receiver -- )
     DUP >R
     00 AWAIT
-    DROP 2A8
+    DROP UB_0_BIT
     TIMER START
     BEGIN
         R@ READ

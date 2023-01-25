@@ -30,10 +30,10 @@
 
 \ The following constants are defined to point to the registers above.
 \ DIV, DEL and CLKT can be left whitout changes.
-BSC1 PERI_BASE +             CONSTANT C
-BSC1 PERI_BASE + 04 +        CONSTANT S
+BSC1 PERI_BASE +             CONSTANT CTRL
+BSC1 PERI_BASE + 04 +        CONSTANT STATUS
 BSC1 PERI_BASE + 08 +        CONSTANT DLEN
-BSC1 PERI_BASE + 0C +        CONSTANT A
+BSC1 PERI_BASE + 0C +        CONSTANT SLAVE
 BSC1 PERI_BASE + 10 +        CONSTANT FIFO
 BSC1 PERI_BASE + 14 +        CONSTANT DIV
 BSC1 PERI_BASE + 18 +        CONSTANT DEL
@@ -42,7 +42,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ Set slave address.
 \ It can be left across multiple transfers.
 : SET_SLAVE ( slave_address -- ) 
-    A ! ;
+    SLAVE ! ;
 
 \ Set number of data bytes to transfer.
 : SET_DLEN ( length -- ) 
@@ -55,12 +55,12 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ Reset status for subsequent transfers.
 \ Only CLKT (9), ERR (8) and DONE (1) can be cleared (W1C type), all other flags are read-only (RO). 
 : RESET_STATUS ( -- )
-    302 S ! ;
+    302 STATUS ! ;
 
 \ Clear FIFO.
 \ - CLEAR (5:4) set to X1 or 1X in order to clear the FIFO before the new frame is started.
 : CLEAR_FIFO ( -- )
-    10 C ! ;
+    10 CTRL ! ;
 
 \ Modify control register to trigger a transfer.
 \ To start a new transfer, all bits are zero except for:
@@ -68,7 +68,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ - ST (7) set to 1 to start a new transfer (one-shot operation).
 \ Interrupts are disabled.
 : TRANSFER ( -- )
-    8080 C ! ;
+    8080 CTRL ! ;
 
 \ Data transfer through the I2C bus interface.
 \ Since communication is established to the LCD panel, 8 bits at a time are sent.
