@@ -1,22 +1,25 @@
 \ Creates variable to store the last sampled command.
 VARIABLE LAST_COMMAND
 
+\ Creates constant for 2 seconds delay.
+1E8480 CONSTANT 2SECONDS
+
 \ Welcome quote to start the program.
 : QUOTE ( -- )
     S" `Learning never "    PRINT_STRING
     RH_LINE2
     S" exhausts the "       PRINT_STRING 
-    1E8480 DELAY 
+    2SECONDS DELAY 
     CLEAR_DISPLAY
     RH_LINE1
     S" mind.` "             PRINT_STRING
     RH_LINE2
     S" - Leonardo da "      PRINT_STRING
-    1E8480 DELAY 
+    2SECONDS DELAY 
     CLEAR_DISPLAY
     RH_LINE1
     S" Vinci"               PRINT_STRING 
-    1E8480 DELAY 
+    2SECONDS DELAY 
     CLEAR_DISPLAY
     RH_LINE1
     S" Waiting for "        PRINT_STRING

@@ -44,11 +44,11 @@ VARIABLE COMMAND
 : START_BIT ( receiver -- good_or_fail )
     BEGIN
         DUP READ
-        0=
+        LOW =
     UNTIL
-    DUP 00 AWAIT
+    DUP LOW AWAIT
     LB_START_BIT UB_START_BIT IN_RANGE
-    OVER 01 AWAIT
+    OVER HIGH AWAIT
     LB_START_BIT UB_START_BIT IN_RANGE 
     AND NIP ;
 
@@ -62,9 +62,9 @@ VARIABLE COMMAND
 \ Since perfect timing cannot be achieved, I sample a timing contained within 0.44 ms and 0.68 ms.
 \ Usage: RECEIVER DETECT_BIT
 : DETECT_BIT ( receiver -- sampled_value )
-    DUP 00 AWAIT
+    DUP LOW AWAIT
     LB_0_BIT UB_0_BIT IN_RANGE
-    OVER 01 AWAIT
+    OVER HIGH AWAIT
     LB_0_BIT UB_0_BIT IN_RANGE
     IF
         -1
@@ -92,7 +92,7 @@ VARIABLE COMMAND
 \ Usage: RECEIVER STOP_BIT
 : STOP_BIT ( receiver -- )
     DUP >R
-    00 AWAIT
+    LOW AWAIT
     DROP UB_0_BIT
     TIMER START
     BEGIN

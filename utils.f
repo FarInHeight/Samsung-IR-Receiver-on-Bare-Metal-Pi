@@ -16,6 +16,12 @@ FE000000    CONSTANT PERI_BASE
 \ Creates constant for offset GPIO pin level registers.
 34          CONSTANT GPIO_LEV_OFFSET
 
+\ Creates constant for LOW bit value.
+00          CONSTANT LOW
+
+\ Creates constant for HIGH bit value.
+01          CONSTANT HIGH
+
 \ Creates constant for input function.
 00          CONSTANT INPUT
 
@@ -84,11 +90,11 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
     RSHIFT 01 AND ;
 
 \ Sets a GPIO output high for a given GPIO pin.
-: HIGH ( gpio_pin_number -- )
+: SET_HIGH ( gpio_pin_number -- )
     DUP BIT>WORD SWAP GPSET ! ;
 
 \ Sets a GPIO output low for a given GPIO pin.
-: LOW ( gpio_pin_number -- )
+: SET_LOW ( gpio_pin_number -- )
     DUP BIT>WORD SWAP GPCLR ! ;
 
 \ Returns GPLEV register address for a given GPIO pin.
