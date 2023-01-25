@@ -51,6 +51,7 @@
     1C
     BEGIN
         DUP
+        0 >=
     WHILE
         2DUP RSHIFT
         0F AND 
