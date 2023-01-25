@@ -12,4 +12,5 @@ with open('program.f', 'a') as f:
                 idx1 = reg.start()
                 idx2 = reg.end()
                 line = line[:idx1] + line[idx2:]
+            line = ' '.join( re.split('\s+', line) )
             print(line, file=f, end=' ')
