@@ -1,0 +1,237 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel} 
+\usepackage[margin=3cm]{geometry}
+\usepackage[none]{hyphenat}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{csquotes}
+\usepackage{ragged2e}
+\justifying
+
+\graphicspath{ {../images/} }
+
+\usepackage[backend=biber, style=ieee]{biblatex}
+\addbibresource{references.bib}
+\nocite{*}
+
+\setlength{\headheight}{15pt}
+
+% setting the format of the page
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[L]{\slshape{\MakeUppercase{Embedded Systems}}}
+\fancyhead[R]{\slshape{Davide Sferrazza}}
+\fancyfoot[C]{\thepage}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+        \Large\textbf{Università degli Studi di Palermo } \\
+        \Large\textbf{Computer Engineering} \\
+        \vfill
+        \Huge\textbf{Embedded Systems} \\[3mm]
+        \Large\textbf{IR Receiver Project} \\[1mm]
+        \vfill
+        By Davide Sferrazza\\
+        \today
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+
+\setcounter{page}{1}
+
+
+\section{Introduction}
+The proposed project consists of using an IR receiver to capture commands sent by a remote controller and displaying them on an LCD display, along with the name of the pressed buttons. \\
+This document is organized as follows:
+\begin{itemize}
+    \item Firstly, I will discuss the hardware used for the implementation, by describing the physical architecture where the software will run and the external necessary harware components that will interact with it;
+    \item  Then, I will explain the environment used for the development of the project;
+    \item Lastly, I will illustate how the code was designed and organized.
+\end{itemize}
+
+On the last pages you can find the entire code. It can also be found online using GitHub (insert link). 
+
+\section{Harware}
+\subsection{Raspberry Pi 4 Model B}
+The target of this project is a general-purpose Single-Board Computer (SBC): the Raspberry Pi 4 Model B. 
+
+It is a member of a series of products, which are developed in the United Kingdom by the Raspberry Pi Foundation in association with Broadcom. \\
+It  was released in June 2019\cite{Rpi4} and replaced the well-known \textbf{Raspberry Pi 3 Model B} and \textbf{Raspberry Pi 3 Model B+}.
+
+\begin{figure}[h]
+\includegraphics[width=8cm]{pi4}
+\centering
+\caption[bottom]{Raspberry Pi 4 Model B}
+\end{figure}
+
+It is built with the following specifications\cite{SpecsRpi4}:
+\begin{itemize}
+    \item Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz;
+    \item 1GB, 2GB, 4GB or 8GB LPDDR4-3200 SDRAM (depending on model);
+    \item 2.4 GHz and 5.0 GHz IEEE 802.11ac wireless, Bluetooth 5.0, BLE;
+    \item Gigabit Ethernet;
+    \item 2 USB 3.0 ports; 2 USB 2.0 ports;
+    \item Raspberry Pi standard 40 pin GPIO header (fully backwards compatible with previous boards);
+    \item 2 × micro-HDMI ports (up to 4kp60 supported);
+    \item 2-lane MIPI DSI display port;
+    \item 2-lane MIPI CSI camera port;
+    \item 4-pole stereo audio and composite video port;
+    \item H.265 (4kp60 decode);
+    \item H264 (1080p60 decode, 1080p30 encode);
+    \item OpenGL ES 3.1, Vulkan 1.0;
+    \item Micro-SD card slot for loading operating system and data storage;
+    \item 5V DC via USB-C connector (minimum 3A*);
+    \item 5V DC via GPIO header (minimum 3A*);
+    \item Power over Ethernet (PoE) enabled (requires separate PoE HAT);
+    \item Operating temperature: 0 – 50 degrees C ambient.
+\end{itemize}
+The model I used comes with 4GB of RAM.
+
+\subsection{FTDI Adapter FT232RL}
+Since modern computers do not expose serial ports to program the SBC, a UART (Universal Asynchronous Receiver-Transmitter) serial adapter is required. 
+
+\begin{figure}[h]
+    \includegraphics[width=6cm]{FT232-AZ}
+    \centering
+    \caption[bottom]{FTDI Adapter FT232RL from Mini-USB to TTL}
+\end{figure}
+
+I adopted the Mini-USB to TTL serial adapter provided by AZ-Delivery\cite{FTDIAdapter}. \\
+To avoid voltage problems power is supplied from the terminal used to develop the project and is shared between the Pi 4 and the FT232RL. \\ 
+The connection is made in the following way:
+\begin{itemize}
+    \item FT232RL RX pin is connected to GPIO 14 (TXD);
+    \item FT232RL TX pin is connected to GPIO 15 (RXD);
+    \item FT232RL GND pin is connected to the GND of the Pi 4.
+\end{itemize}
+
+\subsection{KY-022 Infrared receiver module}
+The infrared receiver module I used is provided by ELEGOO\cite{ELEGOO}. 
+
+\begin{figure}[h]
+    \includegraphics[width=8cm]{ir_module}
+    \centering
+    \caption[bottom]{KY-022}
+\end{figure}
+
+IR detectors\footnote{\url{https://drive.google.com/file/d/1jfLQ6lDgM_gSl604r_zW7n1IvWrFUKN9/view}} are little microchips with a photocell that are tuned to listen to infrared light. They are almost always used for remote control detection - every TV and DVD player has one of these in the front to listen for the IR signal from the clicker. Inside the remote control is a matching IR LED, which emits IR pulses to tell the TV to turn on, off or change channels. IR light is not visible to the human eye, which means it takes a little more work to test a setup.
+
+The module is able to detect frequencies ranging from about 35 KHz to 41 KHz, but the peak frequency detection is at 38 KHz.
+
+The IR receiver comes with 3 pins: the digital signal output pin (S) used to read the value of infrared light, the power pin (+) and the ground pin (-).
+
+When it detects a 38KHz IR signal, the output is low. When it detects nothing, the output is high. \\
+It requires a supply voltage in $[2.7, \, 5.5]$V, so it is powered by the Pi 4 using one of the 3V3 pins. Its GND pin is connected to the GND of the Pi 4.
+
+Its output pin is connected to GPIO 25.
+
+\subsection{LCD1602}
+The LCD1602\cite{lcd, i2cLcd} is an industrial character LCD that can display $16 \times 2$ or 32 characters at the same time, with a display font of $5 \times 8$ dots. The principle of the LCD1602 liquid crystal display is to use the physical characteristics of the liquid crystal to control the display area by voltage,
+that is, the graphic can be displayed.
+\begin{figure}[h]
+    \includegraphics[width=7cm]{lcd}
+    \centering
+    \caption[bottom]{LCD 1602}
+\end{figure}
+
+It is controlled through a parallel interface with:
+\begin{itemize}
+    \item 8-bit/4-bit data bus;
+    \item 3 control signals.
+\end{itemize}
+The interface signals reach the two controller chips that drive the LCD panel:
+\begin{figure}[h]
+    \includegraphics[width=14cm]{lcd_signals}
+    \centering
+    \caption[bottom]{Block Diagram}
+\end{figure}
+\newpage
+Pin assignments are summarized in this table:
+\begin{figure}[h]
+    \includegraphics[width=13cm]{lcd_pin_assignments}
+    \centering
+    \caption[bottom]{LCD pin assignments}
+\end{figure}
+
+To properly read or write data, some timing constraints must be observed. \\
+Independently of whether we are reading or writing, the Enable signal must start its falling edge while DB$0$-DB$7$ are stable. If it is not, then erroneous data are sampled. 
+The read or write mode is chosen only by the RW signal, so only one case of these modes can be represented.
+\begin{figure}[h]
+    \includegraphics[width=12cm]{lcd_writing_data}
+    \centering
+    \caption[bottom]{LCD pin assignments}
+\end{figure}
+
+There are four categories of instructions that:
+\begin{itemize}
+    \item set display format, data length, cursor move direction, display shift etc.;
+    \item set internal RAM addresses;
+    \item perform data transfer from/to internal RAM;
+    \item others.
+\end{itemize}
+A detailed description of how they can be realized is as follows:
+\begin{figure}[h]
+    \includegraphics[width=11cm]{lcd_instructions_pt1}
+    \includegraphics[width=11cm]{lcd_instructions_pt2}
+    \centering
+    \caption[bottom]{Instruction Table}
+\end{figure}
+
+\subsection{IIC PCF8574T Interface}
+To ease the communication to the LCD display a serial I$^2$C module\cite{i2cLcd} has been used.
+The interface connects its serial input and parallel output to the LCD, so only 4 lines can be used to do the job.
+
+The I$^2$C bus was invented by Philips Semiconductor (now NXP Semiconductors). It can be described as:
+\begin{itemize}
+    \item synchronous;
+    \item multi-master;
+    \item multi-slave;
+    \item packet switched;
+    \item single-ended.
+\end{itemize}
+
+\subsection{Schematics}
+All the hardware components shown in the previous sections have been connected with a breadboard to the Pi 4 as follows:
+\begin{figure}[h]
+    \includegraphics[width=15cm]{schematics}
+    \centering
+    \caption[bottom]{Schematics}
+\end{figure}
+
+The following table summarizes all the connections between them and the Pi:
+\begin{table}[h]
+    \centering
+    \begin{tabular}{c c c c} 
+        \hline
+        Pi 4 Model B & KY-022 & FT232RL & IIC PCF8574T \\ [0.5ex] 
+        \hline\hline
+        GPIO 25 & S & & \\
+        3V3 power & +  & & \\
+        GPIO 14 (TXD) & & RX  & \\
+        GPIO 15 (RXD) & & TX  & \\
+        5V power & & & VCC \\
+        GPIO 2 (SDA) & & & SDA \\
+        GPIO 3 (SCL) & & & SCL \\
+        Ground & - & GND & GND \\
+        \hline
+        \end{tabular}
+\end{table}
+
+\scriptsize
+\verbatiminput{../i2c.f}
+
+\printbibliography
+\end{document}

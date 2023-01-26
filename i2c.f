@@ -109,7 +109,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ then transfer is obtained by sending:
 \   HIGH 1 1 0 0 -> HIGH 1 0 0 0 -> LOW 1 1 0 0 -> LOW 1 0 0 0
 \ If it part of a data transfer then:
-\   HIGH 1 1 0 1 -> HIGH 1 0 0 0 -> LOW 1 1 0 1 -> LOW 1 0 0 0
+\   HIGH 1 1 0 1 -> HIGH 1 0 0 1 -> LOW 1 1 0 1 -> LOW 1 0 0 1
 \ RS is equal to 0 for instruction input and it is equal to 1 for data input.
 
 
@@ -119,7 +119,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
     IF 
         0C 08
     ELSE 
-        0D 08
+        0D 09
     THEN ;
 
 \ Returns a nibble aggregated with the first setting part and the second setting part.
