@@ -53,6 +53,14 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 : R@ ( -- top_of_return_stack )
     R> R> TUCK >R >R ;
 
+\ Clear the specified bits of a given word using a pattern.
+: BIC ( word pattern -- word_with_cleared_bits )
+    INVERT AND ;
+
+\ Returns -1 if a value in contained within an interval, 0 otherwise.
+: IN_RANGE ( value low high -- truth_value )
+    ROT DUP ROT <= -ROT <= AND ;
+
 \ Multiplies a number by 4 to refer to word offsets.
 : >WORD ( number -- word_aligned_number )
     02 LSHIFT ;
@@ -85,7 +93,7 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 : BIT>WORD ( gpio_pin_number -- bit_word )
     20 MOD 01 SWAP LSHIFT ;
 
-\ Returns 0 or 1 depending on the value of the bit a given position of a given 32 bit word.
+\ Returns 0 or 1 depending on the value of the bit in a given position of a given 32 bit word.
 : WORD>BIT ( bit_word bit_number -- bit_value )
     RSHIFT 01 AND ;
 

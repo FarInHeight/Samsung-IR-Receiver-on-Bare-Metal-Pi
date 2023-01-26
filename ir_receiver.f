@@ -16,13 +16,9 @@
 \ Creates variable to store the sampled command.
 VARIABLE COMMAND
 
-\ Sets up receiver by configuring its GPIO pin as input.
+\ Sets up the receiver by configuring its GPIO pin as input.
 : INIT_RECEIVER ( -- )
     RECEIVER INPUT CONFIGURE ;
-
-\ Returns -1 is a value in contained within an interval, 0 otherwise.
-: IN_RANGE ( value low high -- truth_value )
-    ROT DUP ROT <= -ROT <= AND ;
 
 \ Awaits a transition from the given value to its negation and returns the elapsed time.
 \ Usage: RECEIVER 0X AWAIT (where X is 0 or 1)

@@ -52,15 +52,23 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 : APPEND ( 8_bit_data -- )
     FIFO ! ;
 
-\ Reset status for subsequent transfers.
-\ Only CLKT (9), ERR (8) and DONE (1) can be cleared (W1C type), all other flags are read-only (RO). 
-: RESET_STATUS ( -- )
-    302 STATUS ! ;
+\ Reset the control register without touching the reserved bits.
+\ Reserved bits are in positions: 31:16, 14:11, 6 and 3:1.
+\ Interrupts are disabled.
+: RESET_CTRL ( -- )
+    CTRL @ 87B1 BIC CTRL ! ;
 
-\ Clear FIFO.
+\ Reset status for subsequent transfers without touching the reserved bits.
+\ Only CLKT (9), ERR (8) and DONE (1) can be cleared (W1C type), all other flags are read-only (RO). 
+\ Reserved bits are in positions: 31:10.
+: RESET_STATUS ( -- )
+    STATUS @ 302 OR STATUS ! ;
+
+\ Clear FIFO without touching the reserved bits.
 \ - CLEAR (5:4) set to X1 or 1X in order to clear the FIFO before the new frame is started.
+\ Interrupts are disabled.
 : CLEAR_FIFO ( -- )
-    10 CTRL ! ;
+    CTRL @ 10 OR CTRL ! ;
 
 \ Modify control register to trigger a transfer.
 \ To start a new transfer, all bits are zero except for:
@@ -68,14 +76,15 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ - ST (7) set to 1 to start a new transfer (one-shot operation).
 \ Interrupts are disabled.
 : TRANSFER ( -- )
-    8080 CTRL ! ;
+    CTRL @ 8080 OR CTRL ! ;
 
 \ Data transfer through the I2C bus interface.
 \ Since communication is established to the LCD panel, 8 bits at a time are sent.
 : >I2C
     RESET_STATUS
+    RESET_CTRL
     CLEAR_FIFO
-    1 SET_DLEN
+    01 SET_DLEN
     APPEND
     TRANSFER ;
 
@@ -84,8 +93,8 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ Configure GPIO pin 3 for Serial Clock Line.
 \ Set the slave address to 0x27.
 : INIT_I2C
-    2 ALT0 CONFIGURE
-    3 ALT0 CONFIGURE
+    02 ALT0 CONFIGURE
+    03 ALT0 CONFIGURE
     27 SET_SLAVE ;
 
 \ Consider the following structure of data transfer:
@@ -115,11 +124,11 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 
 \ Returns a nibble aggregated with the first setting part and the second setting part.
 : AGGREGATE ( settings byte -- nibble_second_setting nibble_first_setting )
-    4 LSHIFT DUP ROT OR -ROT OR ;
+    04 LSHIFT DUP ROT OR -ROT OR ;
 
 \ Divides a byte into two nibbles.
 : BYTE>NIBBLES ( byte -- lower_nibble upper_nibble )
-    DUP 0F AND SWAP 4 RSHIFT 0F AND ;
+    DUP 0F AND SWAP 04 RSHIFT 0F AND ;
 
 \ Send a nibble to LCD aggregated with settings.
 : SEND_NIBBLE ( nibble truth_value -- )
@@ -130,7 +139,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 
 \ Transmits input to LCD given an instruction or data.
 : >LCD ( input -- )
-    DUP 8 WORD>BIT >R
+    DUP 08 WORD>BIT >R
     BYTE>NIBBLES R@
     SEND_NIBBLE R>
     SEND_NIBBLE ;
