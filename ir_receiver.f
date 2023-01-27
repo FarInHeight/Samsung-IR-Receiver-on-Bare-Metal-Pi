@@ -21,7 +21,7 @@ VARIABLE COMMAND
     RECEIVER INPUT CONFIGURE ;
 
 \ Awaits a transition from the given value to its negation and returns the elapsed time.
-\ Usage: RECEIVER 0X AWAIT (where X is 0 or 1)
+\ Usage: RECEIVER LOW (or HIGH) AWAIT 
 : AWAIT ( receiver value -- elapsed_time )
     TIMER START
     BEGIN

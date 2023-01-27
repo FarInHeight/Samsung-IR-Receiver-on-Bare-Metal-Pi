@@ -5,6 +5,7 @@
 \usepackage[none]{hyphenat}
 \usepackage{fancyhdr}
 \usepackage{graphicx}
+\usepackage{subfigure}
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage{verbatim}
@@ -52,7 +53,6 @@
 
 \setcounter{page}{1}
 
-
 \section{Introduction}
 The proposed project consists of using an IR receiver to capture commands sent by a remote controller and displaying them on an LCD display, along with the name of the pressed buttons. \\
 This document is organized as follows:
@@ -72,9 +72,10 @@ It is a member of a series of products, which are developed in the United Kingdo
 It  was released in June 2019\cite{Rpi4} and replaced the well-known \textbf{Raspberry Pi 3 Model B} and \textbf{Raspberry Pi 3 Model B+}.
 
 \begin{figure}[h]
-\includegraphics[width=8cm]{pi4}
-\centering
-\caption[bottom]{Raspberry Pi 4 Model B}
+    \centering
+    \subfigure[]{\includegraphics[width=7cm]{pi4}} 
+    \subfigure[]{\includegraphics[width=6cm]{GPIO-Pinout-Diagram-2}} 
+    \caption{Raspberry Pi 4 Model B}
 \end{figure}
 
 It is built with the following specifications\cite{SpecsRpi4}:
@@ -106,7 +107,7 @@ Since modern computers do not expose serial ports to program the SBC, a UART (Un
 \begin{figure}[h]
     \includegraphics[width=6cm]{FT232-AZ}
     \centering
-    \caption[bottom]{FTDI Adapter FT232RL from Mini-USB to TTL}
+    \caption{FTDI Adapter FT232RL from Mini-USB to TTL}
 \end{figure}
 
 I adopted the Mini-USB to TTL serial adapter provided by AZ-Delivery\cite{FTDIAdapter}. \\
@@ -119,15 +120,15 @@ The connection is made in the following way:
 \end{itemize}
 
 \subsection{KY-022 Infrared receiver module}
-The infrared receiver module I used is provided by ELEGOO\cite{ELEGOO}. 
+The infrared receiver module I used is provided by ELEGOO. 
 
 \begin{figure}[h]
     \includegraphics[width=8cm]{ir_module}
     \centering
-    \caption[bottom]{KY-022}
+    \caption{KY-022}
 \end{figure}
 
-IR detectors\footnote{\url{https://drive.google.com/file/d/1jfLQ6lDgM_gSl604r_zW7n1IvWrFUKN9/view}} are little microchips with a photocell that are tuned to listen to infrared light. They are almost always used for remote control detection - every TV and DVD player has one of these in the front to listen for the IR signal from the clicker. Inside the remote control is a matching IR LED, which emits IR pulses to tell the TV to turn on, off or change channels. IR light is not visible to the human eye, which means it takes a little more work to test a setup.
+IR detectors\cite{ELEGOO} are little microchips with a photocell that are tuned to listen to infrared light. They are almost always used for remote control detection - every TV and DVD player has one of these in the front to listen for the IR signal from the clicker. Inside the remote control is a matching IR LED, which emits IR pulses to tell the TV to turn on, off or change channels. IR light is not visible to the human eye, which means it takes a little more work to test a setup.
 
 The module is able to detect frequencies ranging from about 35 KHz to 41 KHz, but the peak frequency detection is at 38 KHz.
 
@@ -144,7 +145,7 @@ that is, the graphic can be displayed.
 \begin{figure}[h]
     \includegraphics[width=7cm]{lcd}
     \centering
-    \caption[bottom]{LCD 1602}
+    \caption{LCD 1602}
 \end{figure}
 
 It is controlled through a parallel interface with:
@@ -156,14 +157,14 @@ The interface signals reach the two controller chips that drive the LCD panel:
 \begin{figure}[h]
     \includegraphics[width=14cm]{lcd_signals}
     \centering
-    \caption[bottom]{Block Diagram}
+    \caption{Block Diagram}
 \end{figure}
 \newpage
 Pin assignments are summarized in this table:
 \begin{figure}[h]
     \includegraphics[width=13cm]{lcd_pin_assignments}
     \centering
-    \caption[bottom]{LCD pin assignments}
+    \caption{LCD pin assignments}
 \end{figure}
 
 To properly read or write data, some timing constraints must be observed. \\
@@ -172,7 +173,7 @@ The read or write mode is chosen only by the RW signal, so only one case of thes
 \begin{figure}[h]
     \includegraphics[width=12cm]{lcd_writing_data}
     \centering
-    \caption[bottom]{LCD pin assignments}
+    \caption{Writing timing characteristics}
 \end{figure}
 
 There are four categories of instructions that:
@@ -187,11 +188,11 @@ A detailed description of how they can be realized is as follows:
     \includegraphics[width=11cm]{lcd_instructions_pt1}
     \includegraphics[width=11cm]{lcd_instructions_pt2}
     \centering
-    \caption[bottom]{Instruction Table}
+    \caption{Instruction Table}
 \end{figure}
 
-\subsection{IIC PCF8574T Interface}
-To ease the communication to the LCD display a serial I$^2$C module\cite{i2cLcd} has been used.
+\subsection{IIC PCF8574AT Interface}
+To ease the communication to the LCD display a serial I$^2$C module\cite{i2cLcd,PCF8574} has been used.
 The interface connects its serial input and parallel output to the LCD, so only 4 lines can be used to do the job.
 
 The I$^2$C bus was invented by Philips Semiconductor (now NXP Semiconductors). It can be described as:
@@ -203,12 +204,80 @@ The I$^2$C bus was invented by Philips Semiconductor (now NXP Semiconductors). I
     \item single-ended.
 \end{itemize}
 
+Each device connected to the bus is software-addressable by a unique address.
+
+Two wires carry data (SDA - Serial DAta) and clock signals (SCL - Serial CLock), with the bus clock generated by the master
+
+It makes use of open-drain connections for bidirectional communication which allows us to transmit a logic low simply by activating a pull-down FET, which shorts the line to ground.
+To transmit a logic high, the line is left floating, and the pull-up resistor pulls the voltage up to the voltage rail.
+
+The PCF8574AT I/O expander for I$^2$C-bus contains:
+\begin{itemize}
+    \item 8-bit remote I/O pins (indicated as P0, P1, \dots, P7) used to transfer data;
+    \item 3 address pins (ndicated as A0, A1, A2) used to address the slave.
+\end{itemize}
+
+In this project, it is not necessary to read data from I$^2$C LCD, so only the writing mechanism will be described.
+
+\subsubsection{Writing mechanism}
+
+To allow a master to send data to a slave device:
+\begin{enumerate}
+    \item the master, which acts as the transmitter, initiates communication by sending a START condition and addressing the slave, which acts as the receiver;
+    \item the master sends data to the slave-receiver;
+    \item the master terminates the transfer by sending a STOP condition.
+\end{enumerate}
+
+A high-to-low transition on the SDA line while the SCL is high is interpreted as a START condition. \\
+In a reverse manner, a low-to-high transition on the SDA line while the SCL is high is interpreted as a STOP condition.
+
+\begin{figure}[h]
+    \includegraphics[width=11cm]{start_stop_conds}
+    \centering
+    \caption{START and STOP conditions}
+\end{figure}
+
+A byte may either be a device address, register address, or data written a slave.
+
+One data bit is transferred during each clock pulse. The data on the SDA line must remain stable during the HIGH period of the clock pulse as changes in the data line at this time will be interpreted as control signals. \\
+Any number of data bytes can be transferred from the master to slave between the START and STOP conditions. \\
+Data is transferred starting from the MSB (Most Significant Bit).
+
+After each byte of data is transmitted, the master releases the SDA line to allow the slave-receiver to signal a successful transfer with an ACK (Acknowledge) or a failed transfer with a NACK (Not Acknowledge). \\
+The receiver sends an ACK bit if it pulls down the SDA line during the low phase of period 9 of SCL. If the SDA line remains high, a NACK is sent.
+
+\begin{figure}[h]
+    \includegraphics[width=11cm]{ACK_NACK}
+    \centering
+    \caption{Acknowledgements}
+\end{figure}
+
+Thus, there are 6 steps for the writing mechanism:
+\begin{enumerate}
+    \item the master sends the START condition and slave address setting the
+    last bit of the address byte to logic 0 for the write mode;
+    \item the slave sends an ACK bit;
+    \item the master sends the register address of the register it wishes to write to;
+    \item the slave possibly acknowledges again;
+    \item the master starts sending data;
+    \item the master terminates the transmission with a STOP condition.
+\end{enumerate}
+
+\begin{figure}[h]
+    \includegraphics[width=14cm]{write_mode_expander}
+    \centering
+    \caption{Write mode (output)}
+\end{figure}
+
+All this work is done by the PCF8574AT interface.
+All we need to do is to send the data byte for pins P7 to P0.
+
 \subsection{Schematics}
 All the hardware components shown in the previous sections have been connected with a breadboard to the Pi 4 as follows:
 \begin{figure}[h]
-    \includegraphics[width=15cm]{schematics}
+    \includegraphics[width=14.3cm]{schematics}
     \centering
-    \caption[bottom]{Schematics}
+    \caption{Schematics}
 \end{figure}
 
 The following table summarizes all the connections between them and the Pi:
