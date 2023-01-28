@@ -30,7 +30,7 @@
         70702C53 OF S" MENU"                ENDOF
         70706916 OF S" TOOLS"               ENDOF
         70707C03 OF S" INFO"                ENDOF 
-        7070037C OF S" UP"                  ENDOF        \ prova
+        7070037C OF S" UP"                  ENDOF
         7070433C OF S" DOWN"                ENDOF
         7070532C OF S" LEFT"                ENDOF
         7070235C OF S" RIGHT"               ENDOF

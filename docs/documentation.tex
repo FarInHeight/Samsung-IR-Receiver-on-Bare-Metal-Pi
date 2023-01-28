@@ -58,7 +58,7 @@ The proposed project consists of using an IR receiver to capture commands sent b
 This document is organized as follows:
 \begin{itemize}
     \item Firstly, I will discuss the hardware used for the implementation, by describing the physical architecture where the software will run and the external necessary harware components that will interact with it;
-    \item  Then, I will explain the environment used for the development of the project;
+    \item  Then, I will explain the environment used for project development and how to obtain the parameters needed for the project to function properly;
     \item Lastly, I will illustate how the code was designed and organized.
 \end{itemize}
 
@@ -120,15 +120,14 @@ The connection is made in the following way:
 \end{itemize}
 
 \subsection{KY-022 Infrared receiver module}
-The infrared receiver module I used is provided by ELEGOO. 
+
+IR detectors\cite{ELEGOO} are little microchips with a photocell that are tuned to listen to infrared light. They are almost always used for remote control detection - every TV and DVD player has one of these in the front to listen for the IR signal from the clicker. Inside the remote control is a matching IR LED, which emits IR pulses to tell the TV to turn on, off or change channels. IR light is not visible to the human eye, which means it takes a little more work to test a setup.
 
 \begin{figure}[h]
     \includegraphics[width=8cm]{ir_module}
     \centering
     \caption{KY-022}
 \end{figure}
-
-IR detectors\cite{ELEGOO} are little microchips with a photocell that are tuned to listen to infrared light. They are almost always used for remote control detection - every TV and DVD player has one of these in the front to listen for the IR signal from the clicker. Inside the remote control is a matching IR LED, which emits IR pulses to tell the TV to turn on, off or change channels. IR light is not visible to the human eye, which means it takes a little more work to test a setup.
 
 The module is able to detect frequencies ranging from about 35 KHz to 41 KHz, but the peak frequency detection is at 38 KHz.
 
@@ -138,6 +137,28 @@ When it detects a 38KHz IR signal, the output is low. When it detects nothing, t
 It requires a supply voltage in $[2.7, \, 5.5]$V, so it is powered by the Pi 4 using one of the 3V3 pins. Its GND pin is connected to the GND of the Pi 4.
 
 Its output pin is connected to GPIO 25.
+
+\subsection{Samsung AA59-00584A}
+
+The TV remote controller I used is produced by Samsung.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{remote_controller}
+    \caption{Samsung AA59-00584A}
+\end{figure}
+
+After several timing trials, I observed that the implemented protocol conforms to the timings found online on the page cited in the references \cite{8Samsung}. 
+
+For convenience, I report the picture of the timings here:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=15cm]{8_samsung}
+    \caption{Samsung protocol}
+\end{figure}
+
+\newpage
 
 \subsection{LCD1602}
 The LCD1602\cite{lcd, i2cLcd} is an industrial character LCD that can display $16 \times 2$ or 32 characters at the same time, with a display font of $5 \times 8$ dots. The principle of the LCD1602 liquid crystal display is to use the physical characteristics of the liquid crystal to control the display area by voltage,
@@ -272,6 +293,78 @@ Thus, there are 6 steps for the writing mechanism:
 All this work is done by the PCF8574AT interface.
 All we need to do is to send the data byte for pins P7 to P0.
 
+\subsubsection{PCF8574AT to LCD connection}
+The PCF8574AT expander is soldered to the LCD pins according to the following scheme:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{c c} 
+        \hline
+        PCF8574AT pins & LCD pins \\ [0.5ex] 
+        \hline\hline
+        P0 & RS \\
+        P1 & R/W \\
+        P2 & E \\
+        P3 & Backlight \\
+        P4 & D4 \\
+        P5 & D5 \\
+        P6 & D6 \\
+        P7 & D7 \\
+        \hline
+    \end{tabular}
+    \caption{PCF8574AT to LCD pin connections}
+\end{table}
+
+Hence, the first time the LCD is turned on, it must be set to operate in 4 bit mode by sending the sequence:
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ | c | c | c | c | c | c | c | c | } 
+        \hline
+        D7 & D6 & D5 & D4 & Backlight & E & R/W & RS \\ [0.4ex] 
+        \hline
+        0 & 0 & 1 & 0 & 1 & 1 & 0 & 0 \\
+        \hline
+    \end{tabular}
+    \\ [0.3cm] 
+    \begin{tabular}{ | c | c | c | c | c | c | c | c | } 
+        \hline
+        D7 & D6 & D5 & D4 & Backlight & E & R/W & RS \\ [0.4ex] 
+        \hline
+        0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 \\
+        \hline
+    \end{tabular}
+    \caption{FUNCTION SET for 4 bit mode}
+\end{table}
+
+After this setting, instructions can be sent by transmitting the most significant nibble first. \\
+As an example, suppose you want to display an E, whose ASCII code is 0x45. To accomplish this task, the sequence to be sent is as follows:
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ | c | c | c | c | c | c | c | c | } 
+        \hline
+        D7 & D6 & D5 & D4 & Backlight & E & R/W & RS \\ [0.4ex] 
+        \hline
+        0 & 1 & 0 & 0 & 1 & 1 & 0 & 1 \\
+        \hline
+        0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+        \hline
+    \end{tabular}
+    \\ [0.3cm] 
+    \begin{tabular}{ | c | c | c | c | c | c | c | c | } 
+        \hline
+        D7 & D6 & D5 & D4 & Backlight & E & R/W & RS \\ [0.4ex] 
+        \hline
+        0 & 1 & 0 & 1 & 1 & 1 & 0 & 1 \\
+        \hline
+        0 & 1 & 0 & 1 & 1 & 0 & 0 & 1 \\
+        \hline
+    \end{tabular}
+    \caption{Sending an ASCII E}
+\end{table}
+
+which means that the sequence to transmit is: 0x4D, 0x49, 0x5D, 0x59. \\
+Command instructions are sent in the same way, except for the RS bit, which must be set to zero.
+
 \subsection{Schematics}
 All the hardware components shown in the previous sections have been connected with a breadboard to the Pi 4 as follows:
 \begin{figure}[h]
@@ -298,6 +391,29 @@ The following table summarizes all the connections between them and the Pi:
         \hline
         \end{tabular}
 \end{table}
+
+\section{Environment}
+
+\subsection{pijFORTHos}
+Forth is a programming language designed by \textit{Charles H. "Chuck" Moore} which can be implemented easily for resource-constrained machines due to its semplicity. \\
+It is a procedural language heavely based on the use of the stack.
+
+There are several dialects, each with its own definitions. The development involves the definition of new words, which added to the pre-existing vocabulary, can create the final application incrementally and naturally.
+
+pijFORTHos\cite{pijFORTHos} is a bare-metal FORTH interpreter for the Raspberry Pi, based on Jonesforth-ARM\cite{JonesforthARM}. 
+
+Jonesforth-ARM is an ARM port of x86 JonesForth, which is a Linux-hosted FORTH presented in a Literate Programming style by \textit{Richard W.M. Jones}.
+
+pijFORTHos represents the base on which the application is built.
+
+\subsection{Minicom and Picocom}
+\textbf{Minicom}\cite{minicom} is a terminal emulation program for Unix-like operating systems, used for communication and typically to set up a remote serial console.
+
+\textbf{Picocom}\cite{picocom} is, in principle, very much like minicom. It was designed to serve as a simple, manual, modem configuration, testing, and debugging tool.
+
+ASCII-XFR\cite{ASCIIXFR} is used to send the source file to the Raspberry because it
+allows a delay between each character and line sent. \\
+Given that the UART is asynchronous, this is a needed feature because it avoids overrun errors and lost characters if the receiver is busy while executing or compiing FORTH words.
 
 \scriptsize
 \verbatiminput{../i2c.f}
