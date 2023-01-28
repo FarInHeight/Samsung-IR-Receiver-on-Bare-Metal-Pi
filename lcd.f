@@ -6,9 +6,10 @@
 
 \ Sets up the LCD.
 \ By sending this command to the LCD, we set up the data interface to 4 bits, instead
-\ of 8 bits.
+\ of 8 bits, and turn the cursor and cursor position off.
 : INIT_LCD ( -- )
-    102 >LCD ;
+    102 >LCD                    \ Set 4 bit mode
+    10C >LCD ;                  \ Disable cursor and cursor position
 
 \ The following words can be used only after the LCD has been set up.
 

@@ -1,4 +1,7 @@
 \ Returns the string representation corresponding to a given code.
+\ Note that ENDCASE eliminates the top of the stack, so to return
+\ the default string to print we have to do a rotation and let
+\ ENDCASE discard the value used for the lookup.
 : LOOKUP ( code -- address length )
     CASE 
         7070205F OF S" POWER ON/OFF"        ENDOF
@@ -27,7 +30,7 @@
         70702C53 OF S" MENU"                ENDOF
         70706916 OF S" TOOLS"               ENDOF
         70707C03 OF S" INFO"                ENDOF 
-        7070037C OF S" UP"                  ENDOF
+        7070037C OF S" UP"                  ENDOF        \ prova
         7070433C OF S" DOWN"                ENDOF
         7070532C OF S" LEFT"                ENDOF
         7070235C OF S" RIGHT"               ENDOF
@@ -41,6 +44,7 @@
         707031CE OF S" FAMILY STORY"        ENDOF
         70706718 OF S" SEARCH"              ENDOF
         70707C83 OF S" 3D"                  ENDOF
+        70707E01 OF S" SUPPORT"             ENDOF
         70707887 OF S" D (WHAT IS IT?)"     ENDOF
         7070522D OF S" AD/SUBT."            ENDOF
         7070512E OF S" PREVIOUS TRACK"      ENDOF
@@ -49,5 +53,5 @@
         7070710E OF S" PLAY"                ENDOF
         70702956 OF S" PAUSE"               ENDOF
         7070314E OF S" STOP"                ENDOF
-                    S" UNKNOWN COMMAND"
+                    S" UNKNOWN COMMAND" ROT
     ENDCASE ;
