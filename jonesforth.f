@@ -1,5 +1,3 @@
-: '\n' 10 ;
-: BL 32 ;
 : ':' [ CHAR : ] LITERAL ;
 : ';' [ CHAR ; ] LITERAL ;
 : '(' [ CHAR ( ] LITERAL ;
