@@ -4,7 +4,7 @@
 \ Creates constant for lower bound time for a START_BIT detection (4.35 ms).
 10FE CONSTANT LB_START_BIT
 
-\ Creates constant for upper bound time for a START_BIT detection (4.35 ms).
+\ Creates constant for upper bound time for a START_BIT detection (4.65 ms).
 122A CONSTANT UB_START_BIT
 
 \ Creates constant for lower bound time for a 0 bit detection (0.56 ms).

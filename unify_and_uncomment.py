@@ -10,7 +10,7 @@ with open('program.f', 'a') as f:
         # skip comment lines
         if line and line[0] != '\\':
             # delete inline comments such as ( i1 i2 ... -- o1 o2 ... )
-            reg = re.search("\s+\(\s+[^-]*--[^-]*\s+\)", line)
+            reg = re.search("\s+\(\s+[^-]*--[^-]*\s+\)$", line)
             if hasattr(reg, 'start') and hasattr(reg, 'end'):
                 idx1 = reg.start()
                 idx2 = reg.end()
