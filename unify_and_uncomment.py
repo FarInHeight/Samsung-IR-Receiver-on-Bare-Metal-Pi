@@ -16,7 +16,9 @@ with open('program.f', 'a') as f:
                 idx2 = reg.end()
                 line = line[:idx1] + line[idx2:]
             # delete inline comments such as \ ...
-            line = line[ : line.find('\\') - 1 ] if line.find('\\') != -1 else line
-            # unify line by deleting extra spaces and skipping string containing only whitespaces
-            line = ' '.join( filter( lambda x: not x.isspace(),  re.split('\s+', line) ) )
+            line = line[: line.find('\\') - 1 ] if line.find('\\') != -1 else line
+            # unify line by deleting extra spaces and skipping 
+            # string containing only whitespaces
+            skip_whitespaces = lambda x: not x.isspace()
+            line = ' '.join( filter( skip_whitespaces,  re.split('\s+', line) ) )
             print(line, file=f, end=' ')

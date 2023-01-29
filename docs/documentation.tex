@@ -9,6 +9,9 @@
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{fvextra}
+\usepackage{listings}
 \usepackage{xcolor}
 \usepackage{parskip}
 \usepackage{csquotes}
@@ -16,6 +19,32 @@
 \justifying
 
 \graphicspath{ {../images/} }
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{mystyle}{
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=true,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    columns=fullflexible,
+}
+
+\lstset{style=mystyle}
 
 \usepackage[backend=biber, style=ieee]{biblatex}
 \addbibresource{references.bib}
@@ -74,7 +103,7 @@ It  was released in June 2019\cite{Rpi4} and replaced the well-known \textbf{Ras
 \begin{figure}[h]
     \centering
     \subfigure[]{\includegraphics[width=7cm]{pi4}} 
-    \subfigure[]{\includegraphics[width=6cm]{GPIO-Pinout-Diagram-2}} 
+    \subfigure[]{\includegraphics[width=5.52cm]{GPIO-Pinout-Diagram-2}} 
     \caption{Raspberry Pi 4 Model B}
 \end{figure}
 
@@ -411,12 +440,46 @@ pijFORTHos represents the base on which the application is built.
 
 \textbf{Picocom}\cite{picocom} is, in principle, very much like minicom. It was designed to serve as a simple, manual, modem configuration, testing, and debugging tool.
 
-ASCII-XFR\cite{ASCIIXFR} is used to send the source file to the Raspberry because it
+\textbf{ASCII-XFR}\cite{ASCIIXFR} transfers files in ASCII mode. It is used to send the source file to the Raspberry because it
 allows a delay between each character and line sent. \\
 Given that the UART is asynchronous, this is a needed feature because it avoids overrun errors and lost characters if the receiver is busy while executing or compiing FORTH words.
 
-\scriptsize
-\verbatiminput{../i2c.f}
+Picocom is launched on the development machine through the command:
+\begin{Verbatim}[breaklines=true, breakanywhere=true]
+    picocom --b 115200 /dev/cu.usbserial-A50285BI --send "ascii-xfr -sv -l100 -c10" --imap delbs
+\end{Verbatim}
+
+It is launched with the same VCP (Virtual COM Port) parameters as the Pi UART:
+\begin{itemize}
+    \item \texttt{--b 115200}: 9600 bit/s bit rate;
+    \item \texttt{/dev/cu.usbserial-A50285BI}: the serial UART device;
+    \item \texttt{--send "ascii-xfr -sv -l100 -c10"}:
+    
+    specifies ascii-xfr as the external
+    command to use for transmitting files. \\
+    The options used are: 
+    \begin{itemize}
+        \item \texttt{-sv}: verbose send mode;
+        \item \texttt{-l100}: sets a 100 milliseconds delay after each line is sent,
+        this usually gives enough time to run a command and be
+        ready for the next line in time
+        \item \texttt{-c10}: waits 10 milliseconds between each character sent.
+    \end{itemize}
+    \item \texttt{--imap delbs}: : allows the use of backspace to delete a character.
+\end{itemize}
+
+\subsection{Script}
+Since the serial UART has a limited operating speed, one way to speed up the loading of the entire project is to delete all comments and merge the files into a single file.
+
+As not everyone has a Unix-like system operating, the first part of the script (\texttt{create\_program.sh}) is made for Zsh, but can be easily changed to other shelsl because it simply prints the files to the stdout. 
+
+\lstinputlisting[language=sh]{../create_program.sh}
+
+The second part (\texttt{unify\_and\_uncomment.py}) is done in Python, because today almost everyone has a Python interpreter in their system. It reads from stdin, deleting comments and joining all words by separating them with a single space.
+
+\lstinputlisting[language=python, breaklines=true]{../unify_and_uncomment.py}
+
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../i2c.f}
 
 \printbibliography
 \end{document}
