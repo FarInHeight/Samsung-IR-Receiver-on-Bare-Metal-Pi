@@ -117,29 +117,32 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \ is part of a command or data.
 : SETTINGS ( truth_value -- first_setting second_setting )
     IF 
-        0C 08
-    ELSE 
-        0D 09
+        0C 08                       \ Setting parts for a command
+    ELSE
+        0D 09                       \ Setting parts for data
     THEN ;
 
 \ Returns a nibble aggregated with the first setting part and the second setting part.
-: AGGREGATE ( settings byte -- nibble_second_setting nibble_first_setting )
-    04 LSHIFT DUP ROT OR -ROT OR ;
+: AGGREGATE ( first_setting second_setting nibble -- nibble_second_setting nibble_first_setting )
+    04 LSHIFT DUP                   \ first_setting second_setting byte byte
+    ROT OR                          \ first_setting byte nibble_second_setting
+    -ROT OR ;
 
 \ Divides a byte into two nibbles.
 : BYTE>NIBBLES ( byte -- lower_nibble upper_nibble )
-    DUP 0F AND SWAP 04 RSHIFT 0F AND ;
+    DUP 0F AND                      \ Gets lower_nibble
+    SWAP 04 RSHIFT 0F AND ;         \ Gets upper_nibble
 
 \ Send a nibble to LCD aggregated with settings.
 : SEND_NIBBLE ( nibble truth_value -- )
     SETTINGS ROT
-    AGGREGATE
+    AGGREGATE                       \ Gets the 2 bytes to send
     >I2C 1000 DELAY
     >I2C 1000 DELAY ;
 
 \ Transmits input to LCD given an instruction or data.
 : >LCD ( input -- )
-    DUP 08 WORD>BIT >R
-    BYTE>NIBBLES R@
-    SEND_NIBBLE R>
-    SEND_NIBBLE ;
+    DUP 08 WORD>BIT >R              \ Stores the command/data bit in the return stack
+    BYTE>NIBBLES R@                 \ Creates the two nibbles to be sent
+    SEND_NIBBLE R>                  \ Sends the most significant nibble
+    SEND_NIBBLE ;                   \ Sends the least significant nibble

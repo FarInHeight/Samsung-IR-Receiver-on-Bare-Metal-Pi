@@ -8,8 +8,8 @@
 \ By sending this command to the LCD, we set up the data interface to 4 bits, instead
 \ of 8 bits, and turn the cursor and cursor position off.
 : INIT_LCD ( -- )
-    102 >LCD                    \ Set 4 bit mode using FUNCTION SET
-    10C >LCD ;                  \ Disable cursor and cursor position
+    102 >LCD                    \ Sets 4 bit mode using FUNCTION SET
+    10C >LCD ;                  \ Disables cursor and cursor position
 
 \ The following words can be used only after the LCD has been set up.
 
@@ -30,17 +30,17 @@
 \ Prints a string to the LCD. 
 \ Usage: S" embedded systems" PRINT_STRING
 : PRINT_STRING ( address length -- )
-    OVER + SWAP
-    BEGIN
-        DUP C@ >LCD
-        1+
-        2DUP =
+    OVER + SWAP                 \ address_last_char+1 address_first_char
+    BEGIN                       \ While there are chars to send
+        DUP C@ >LCD             \ Sends the char of the current position
+        1+                      \ Increment address
+        2DUP =                  \ Checks whether the string is terminated
     UNTIL 2DROP ;
 
 \ Converts a 4-bit hexadecimal number to the corrisponding ASCII code.
 : HEX>ASCII ( 4_bit_number -- ascii_code )
     DUP 09 >
-    IF
+    IF                          \ If it is greater than 0, it is a letter.
         0A -
         AASCII +
     ELSE
@@ -49,13 +49,13 @@
 
 \ Prints a hexadecimal number to the LCD.
 : PRINT_HEX ( number -- )
-    1C
+    1C                          \ The amount of shift for sending the current nibble
     BEGIN
         DUP
-        0 >=
+        0 >=                    \ While there are nibbles to send
     WHILE
         2DUP RSHIFT
-        0F AND 
-        HEX>ASCII >LCD
-        04 -
+        0F AND                  \ Gets the current nibble
+        HEX>ASCII >LCD          \ Sends it to the LCD
+        04 -                    \ Decrements the amount of current shift
     REPEAT 2DROP ;

@@ -23,5 +23,5 @@ VARIABLE LAST_TIME
     BEGIN 
         DUP 
         TIMER STOP 
-        < 
+        <                           \ delay_amount_in_us < current_elapsed_time
     UNTIL DROP ;
