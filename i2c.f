@@ -29,7 +29,7 @@
 \                       the slave has hung.
 
 \ The following constants are defined to point to the registers above.
-\ DIV, DEL and CLKT can be left whitout changes.
+\ DIV, DEL and CLKT can be left without changes.
 BSC1 PERI_BASE +             CONSTANT CTRL
 BSC1 PERI_BASE + 04 +        CONSTANT STATUS
 BSC1 PERI_BASE + 08 +        CONSTANT DLEN
@@ -39,38 +39,38 @@ BSC1 PERI_BASE + 14 +        CONSTANT DIV
 BSC1 PERI_BASE + 18 +        CONSTANT DEL
 BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 
-\ Set slave address.
+\ Sets slave address.
 \ It can be left across multiple transfers.
 : SET_SLAVE ( slave_address -- ) 
     SLAVE ! ;
 
-\ Set number of data bytes to transfer.
+\ Sets number of data bytes to transfer.
 : SET_DLEN ( length -- ) 
     DLEN ! ;
 
-\ Place 8 bits at a time in FIFO in order to transmit them on the BSC bus.
+\ Places 8 bits at a time in FIFO in order to transmit them on the BSC bus.
 : APPEND ( 8_bit_data -- )
     FIFO ! ;
 
-\ Reset the control register without touching the reserved bits.
+\ Resets the control register without touching the reserved bits.
 \ Reserved bits are in positions: 31:16, 14:11, 6 and 3:1.
 \ Interrupts are disabled.
 : RESET_CTRL ( -- )
     CTRL @ 87B1 BIC CTRL ! ;
 
-\ Reset status for subsequent transfers without touching the reserved bits.
+\ Resets status for subsequent transfers without touching the reserved bits.
 \ Only CLKT (9), ERR (8) and DONE (1) can be cleared (W1C type), all other flags are read-only (RO). 
 \ Reserved bits are in positions: 31:10.
 : RESET_STATUS ( -- )
     STATUS @ 302 OR STATUS ! ;
 
-\ Clear FIFO without touching the reserved bits.
+\ Clears FIFO without touching the reserved bits.
 \ - CLEAR (5:4) set to X1 or 1X in order to clear the FIFO before the new frame is started.
 \ Interrupts are disabled.
 : CLEAR_FIFO ( -- )
     CTRL @ 10 OR CTRL ! ;
 
-\ Modify control register to trigger a transfer.
+\ Modifies control register to trigger a transfer.
 \ To start a new transfer, all bits are zero except for:
 \ - I2CEN (15) set to 1 to enable the BSC controller;
 \ - ST (7) set to 1 to start a new transfer (one-shot operation).
@@ -78,7 +78,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 : TRANSFER ( -- )
     CTRL @ 8080 OR CTRL ! ;
 
-\ Data transfer through the I2C bus interface.
+\ Transfers data through the I2C bus interface.
 \ Since communication is established to the LCD panel, 8 bits at a time are sent.
 : >I2C
     RESET_STATUS
@@ -88,10 +88,10 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
     APPEND
     TRANSFER ;
 
-\ Setup the I2C bus interface and the slave address.
-\ Configure GPIO pin 2 for Serial Data Line.
-\ Configure GPIO pin 3 for Serial Clock Line.
-\ Set the slave address to 0x27.
+\ Sets up the I2C bus interface and the slave address.
+\ Configures GPIO pin 2 for Serial Data Line.
+\ Configures GPIO pin 3 for Serial Clock Line.
+\ Sets the slave address to 0x27.
 : INIT_I2C
     02 ALT0 CONFIGURE
     03 ALT0 CONFIGURE
@@ -110,7 +110,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
 \   HIGH 1 1 0 0 -> HIGH 1 0 0 0 -> LOW 1 1 0 0 -> LOW 1 0 0 0
 \ If it part of a data transfer then:
 \   HIGH 1 1 0 1 -> HIGH 1 0 0 1 -> LOW 1 1 0 1 -> LOW 1 0 0 1
-\ RS is equal to 0 for instruction input and it is equal to 1 for data input.
+\ RS is equal to 0 for command input and it is equal to 1 for data input.
 
 
 \ Returns setting parts to be sent based on a truth value that indicates whether the input
@@ -133,7 +133,7 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
     DUP 0F AND                      \ Gets lower_nibble
     SWAP 04 RSHIFT 0F AND ;         \ Gets upper_nibble
 
-\ Send a nibble to LCD aggregated with settings.
+\ Sends a nibble to LCD aggregated with settings.
 : SEND_NIBBLE ( nibble truth_value -- )
     SETTINGS ROT
     AGGREGATE                       \ Gets the 2 bytes to send

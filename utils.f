@@ -53,7 +53,7 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 : R@ ( -- top_of_return_stack )
     R> R> TUCK >R >R ;
 
-\ Clear the specified bits of a given word using a pattern.
+\ Clears the specified bits of a given word using a pattern.
 : BIC ( word pattern -- word_with_cleared_bits )
     INVERT AND ;
 

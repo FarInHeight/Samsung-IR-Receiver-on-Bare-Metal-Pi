@@ -40,11 +40,11 @@
 \ Converts a 4-bit hexadecimal number to the corrisponding ASCII code.
 : HEX>ASCII ( 4_bit_number -- ascii_code )
     DUP 09 >
-    IF                          \ If it is greater than 0, it is a letter.
-        0A -
+    IF                          \ If it is greater than 9, it is a letter
+        0A -                    \ Then subtracts 10 and adds the ASCII code of A
         AASCII +
     ELSE
-        0ASCII +
+        0ASCII +                \ Adds the ASCII code of 0 otherwise
     THEN ;
 
 \ Prints a hexadecimal number to the LCD.

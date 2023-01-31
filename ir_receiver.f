@@ -24,9 +24,9 @@ VARIABLE COMMAND
 \ Usage: RECEIVER LOW (or HIGH) AWAIT 
 : AWAIT ( receiver value -- elapsed_time )
     TIMER START
-    BEGIN
-        OVER READ
-        OVER <>
+    BEGIN                                     \ Repeats the loop while the read input for
+        OVER READ                             \ RECEIVER is equal to the current value i.e.
+        OVER <>                               \ awaits a transition to the negation of value
     UNTIL
     2DROP
     TIMER STOP ;
@@ -39,13 +39,13 @@ VARIABLE COMMAND
 \ Usage: RECEIVER START_BIT
 : START_BIT ( receiver -- good_or_fail )
     BEGIN
-        DUP READ
+        DUP READ                               \ Waiting for the transition to begin
         LOW =
     UNTIL
-    DUP LOW AWAIT
-    LB_START_BIT UB_START_BIT IN_RANGE
-    OVER HIGH AWAIT
-    LB_START_BIT UB_START_BIT IN_RANGE 
+    DUP LOW AWAIT                              \ Times how long input is kept LOW
+    LB_START_BIT UB_START_BIT IN_RANGE         \ Checks if it can be considered valid
+    OVER HIGH AWAIT                            \ Times how long input is kept HIGH
+    LB_START_BIT UB_START_BIT IN_RANGE         \ Checks if it can be considered valid
     AND NIP ;
 
 
@@ -58,14 +58,14 @@ VARIABLE COMMAND
 \ Since perfect timing cannot be achieved, I sample a timing contained within 0.44 ms and 0.68 ms.
 \ Usage: RECEIVER DETECT_BIT
 : DETECT_BIT ( receiver -- sampled_value )
-    DUP LOW AWAIT
-    LB_0_BIT UB_0_BIT IN_RANGE
-    OVER HIGH AWAIT
-    LB_0_BIT UB_0_BIT IN_RANGE
+    DUP LOW AWAIT                              \ Times how long input is kept LOW
+    LB_0_BIT UB_0_BIT IN_RANGE                 \ Checks if it can be considered valid 
+    OVER HIGH AWAIT                            \ Times how long input is kept HIGH
+    LB_0_BIT UB_0_BIT IN_RANGE                 \ Checks whether it is 
     IF
-        -1
+        -1                                     \ a 0
     ELSE
-        1
+        1                                      \ or a 1
     THEN 
     AND NIP ;
 
@@ -73,10 +73,10 @@ VARIABLE COMMAND
 \ If value is -1 then add a 0, 1 otherwise.
 : ADD_BIT ( value -- )
     COMMAND @ 
-    1 LSHIFT SWAP
+    1 LSHIFT SWAP                              \ Makes room for the new bit
     1 =
     IF
-        01 OR
+        01 OR                                  \ Adds a 1 if it is a 1
     THEN 
     COMMAND ! ;
 
@@ -87,14 +87,14 @@ VARIABLE COMMAND
 \ Since perfect timing cannot be achieved, I sample a timing contained within  0.44 ms and 0.68 ms.
 \ Usage: RECEIVER STOP_BIT
 : STOP_BIT ( receiver -- )
-    DUP >R
-    LOW AWAIT
+    DUP >R                                     \ Stores the RECEIVER pin number in the return stack
+    LOW AWAIT                                  \ Waits for a transition from LOW to HIGH
     DROP UB_0_BIT
     TIMER START
-    BEGIN
-        R@ READ
-        OVER TIMER STOP <
-        AND
+    BEGIN                                      \ Repeats while 
+        R@ READ                                \ the input is HIGH
+        OVER TIMER STOP <                      \ and not enough time has elapsed to
+        AND                                    \ declare the arrival of a STOP_BIT
     UNTIL
     R>
     2DROP ;
@@ -102,23 +102,23 @@ VARIABLE COMMAND
 \ Samples a command sent to the receiver.
 \ If command detection fails then 0 is returned.
 : DETECT_COMMAND ( -- command_hex )
-    0 COMMAND !
-    RECEIVER START_BIT
-    NOT IF
-        0 EXIT
+    0 COMMAND !                                \ Resets the sampled command
+    RECEIVER START_BIT                         \ Detects whether a START_BIT has arrived.
+    NOT IF                                     \ If not
+        0 EXIT                                 \ returns 0 and exits
     THEN
-    20 
+    20                                         \ Number of bits to be detected
     BEGIN
         1- DUP
-    WHILE
-        RECEIVER DETECT_BIT
+    WHILE                                      \ While there are bits to detect
+        RECEIVER DETECT_BIT                    \ Detects the bit
         DUP
-        NOT IF
+        NOT IF                                 \ If it is not valid
             2DROP
-            0 EXIT
+            0 EXIT                             \ returns 0 and exits
         THEN
-        ADD_BIT
+        ADD_BIT                                \ adds the bit to the current command otherwise
     REPEAT
     DROP
-    RECEIVER STOP_BIT
-    COMMAND @ ;
+    RECEIVER STOP_BIT                          \ Detects the STOP_BIT
+    COMMAND @ ;                                \ Returns the sampled command

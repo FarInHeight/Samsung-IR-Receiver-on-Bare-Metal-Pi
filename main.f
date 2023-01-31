@@ -32,26 +32,26 @@ VARIABLE LAST_COMMAND
 \ equivalent in the second line.
 \ The display is updated only when a new command is found.
 : MAIN ( -- )
-    0 LAST_COMMAND !
-    INIT_I2C
-    INIT_LCD
-    INIT_RECEIVER
+    0 LAST_COMMAND !                        \ Resets the last sampled command
+    INIT_I2C                                \ Initialize the I2C interface
+    INIT_LCD                                \ Initialize the LCD
+    INIT_RECEIVER                           \ Initialize the receiver
 
-    QUOTE
+    QUOTE                                   \ Prints the quote
 
     BEGIN
-        DETECT_COMMAND
-        DUP IF
+        DETECT_COMMAND                      \ Detects the sampled command
+        DUP IF                              \ If it is a valid command
             DUP
             LAST_COMMAND @
-            <>
-            IF
-                CLEAR_DISPLAY
-                RH_LINE1
-                DUP LAST_COMMAND !
-                DUP PRINT_HEX
-                RH_LINE2
-                LOOKUP PRINT_STRING
+            <>                              \ Checks whether is not equal to the last one
+            IF                              \ If they are different
+                CLEAR_DISPLAY               \ Clears the display
+                RH_LINE1                    \ In the first line
+                DUP PRINT_HEX               \ prints the new command in hexadecimal form
+                DUP LAST_COMMAND !          \ Stores the new command
+                RH_LINE2                    \ In the second line
+                LOOKUP PRINT_STRING         \ prints the new command as a string
             THEN
         THEN
     AGAIN ;
