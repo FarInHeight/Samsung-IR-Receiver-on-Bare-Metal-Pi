@@ -93,7 +93,7 @@ This document is organized as follows:
 
 On the last pages you can find the entire code. It can also be found online using GitHub (insert link). 
 
-\section{Harware}
+\section{Hardware}
 \subsection{Raspberry Pi 4 Model B}
 The target of this project is a general-purpose Single-Board Computer (SBC): the Raspberry Pi 4 Model B. 
 
@@ -478,6 +478,82 @@ As not everyone has a Unix-like system operating, the first part of the script (
 The second part (\texttt{unify\_and\_uncomment.py}) is done in Python, because today almost everyone has a Python interpreter in their system. It reads from stdin, deleting comments and joining all words by separating them with a single space.
 
 \lstinputlisting[language=python, breaklines=true]{../unify_and_uncomment.py}
+
+Script files must have execution permissions to run. If you are using a Unix-like operating system you can grant them by typing in a terminal window (assuming you are in the project folder):
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true]
+    chmod u+x unify_and_uncomment.py
+    chmod u+x create_program.sh
+\end{Verbatim}
+
+and then build the project by simply writing (assuming that you have changed the shell and python interpreter):
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true]
+    ./create_program.sh
+\end{Verbatim}
+\section{Software}
+
+\subsection{Prerequisites}
+
+The files needed to be placed in the micro SD card to run the software are as follows:
+\begin{itemize}
+    \item \texttt{bootcode.bin};
+    \item \texttt{config.txt};
+    \item \texttt{fixup.dat};
+    \item \texttt{start4.elf};
+    \item \texttt{kernel7.img} (which contains pijFORTHos);
+    \item \texttt{bcm2711-rpi-4-b.dtb}.
+\end{itemize}
+
+In an equivalent manner, you can format the micro SD card for the Pi 4 using the official software called Raspberry Pi Imager\footnote{\url{https://www.raspberrypi.com/software/}}, released by Raspberry Pi. \\
+When you open the program, you are asked to choose an operating system. You can select Raspberry Pi OS (32 bit) and continue with formatting.
+
+Once the formatting is complete\footnote{Please read the following subsection first}, you need to remove the \texttt{kernel*.img} and insert the \texttt{kernel7.img} that contains pijFORTHos.
+
+Your \texttt{config.txt} file must contain the following uncommented options:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true]
+    dtparam=i2c_arm=on
+
+    dtparam=audio=on
+
+    dtoverlay=vc4-fkms-v3d
+    max_framebuffers=2
+    enable_uart=1
+    dtoverlay=w1-gpio,gpiopin=26
+
+    enable_uart=1
+    dtoverlay=w1-gpio,gpiopin=26
+\end{Verbatim}
+
+
+\subsubsection{How to get IIC LCD slave address}
+
+For the project to work, it is important to know the correct slave address.
+
+A visual method to recognize the address is to analyze the expander structure as follows\cite{i2cLcd}:
+\begin{figure}[h]
+    \includegraphics[width=13.5cm]{i2c_lcd}
+    \centering
+    \caption{PCF8574AT I/O expander}
+\end{figure}
+
+If it doesn't work and you still can't figure out what the address is you can operate using Raspbian. \\
+Open a terminal window and install \texttt{i2c-tools}:
+\begin{Verbatim}[breaklines=true, breakanywhere=true]
+    sudo apt-get install i2c-tools
+\end{Verbatim}
+
+Once the download is complete, you can simply type:
+\begin{Verbatim}[breaklines=true, breakanywhere=true]
+    i2cdetect -y 1 
+\end{Verbatim}
+Now, if the connection on the breadboard is correct, you should see the slave address in the center of the array. \\
+In my case, the I2C slave address is 0x27.
+
+\subsection{Code structure}
+
+The project is composed of
 
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../i2c.f}
 

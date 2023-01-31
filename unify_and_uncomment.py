@@ -18,7 +18,7 @@ with open('program.f', 'a') as f:
             # delete inline comments such as \ ...
             line = line[: line.find('\\') - 1 ] if line.find('\\') != -1 else line
             # unify line by deleting extra spaces and skipping 
-            # string containing only whitespaces
-            skip_whitespaces = lambda x: not x.isspace()
+            # empty strings or strings containing only whitespaces
+            skip_whitespaces = lambda x: x and not x.isspace()
             line = ' '.join( filter( skip_whitespaces,  re.split('\s+', line) ) )
             print(line, file=f, end=' ')
