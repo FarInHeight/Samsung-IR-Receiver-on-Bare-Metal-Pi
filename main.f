@@ -44,7 +44,7 @@ VARIABLE LAST_COMMAND
         DUP IF                              \ If it is a valid command
             DUP
             LAST_COMMAND @
-            <>                              \ Checks whether is not equal to the last one
+            <>                              \ Checks whether it is not equal to the last one
             IF                              \ If they are different
                 CLEAR_DISPLAY               \ Clears the display
                 RH_LINE1                    \ In the first line

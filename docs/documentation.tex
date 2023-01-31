@@ -91,7 +91,7 @@ This document is organized as follows:
     \item Lastly, I will illustate how the code was designed and organized.
 \end{itemize}
 
-On the last pages you can find the entire code. It can also be found online using GitHub (insert link). 
+On the last pages you can find the entire code. It is also available online using GitHub (insert link). 
 
 \section{Hardware}
 \subsection{Raspberry Pi 4 Model B}
@@ -508,7 +508,7 @@ The files needed to be placed in the micro SD card to run the software are as fo
 In an equivalent manner, you can format the micro SD card for the Pi 4 using the official software called Raspberry Pi Imager\footnote{\url{https://www.raspberrypi.com/software/}}, released by Raspberry Pi. \\
 When you open the program, you are asked to choose an operating system. You can select Raspberry Pi OS (32 bit) and continue with formatting.
 
-Once the formatting is complete\footnote{Please read the following subsection first}, you need to remove the \texttt{kernel*.img} and insert the \texttt{kernel7.img} that contains pijFORTHos.
+Once the formatting is complete\footnote{Please read the following subsection first to avoid repeating the procedure}, you need to remove the \texttt{kernel*.img} and insert the \texttt{kernel7.img} that contains pijFORTHos.
 
 Your \texttt{config.txt} file must contain the following uncommented options:
 
@@ -525,7 +525,6 @@ Your \texttt{config.txt} file must contain the following uncommented options:
     enable_uart=1
     dtoverlay=w1-gpio,gpiopin=26
 \end{Verbatim}
-
 
 \subsubsection{How to get IIC LCD slave address}
 
@@ -553,9 +552,51 @@ In my case, the I2C slave address is 0x27.
 
 \subsection{Code structure}
 
-The project is composed of
+The project is composed of 9 files:
+\begin{itemize}
+    \item \texttt{jonesforth.f};
+    \item \texttt{se-ans.f};
+    \item \texttt{utils.f};
+    \item \texttt{timer.f};
+    \item \texttt{i2c.f};
+    \item \texttt{lcd.f};
+    \item \texttt{ir\_receiver.f};
+    \item \texttt{lookup\_table.f};
+    \item \texttt{main.f};
+\end{itemize}
 
+The development process followed a bottom-up methodology, so the files are listed in an ascending order of abstraction.
+
+Each file consists of a module, which contains all the constants and words necessary for the proper functioning of that module.
+
+Given the information on the previous pages, it should be clear how the project works. In addition to the defined words, there are comments explaining what may not be perfectly clear.
+
+\subsubsection{jonesforth.f}
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../jonesforth.f}
+
+\subsubsection{se-ans.f}
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../se-ans.f}
+
+\subsubsection{utils.f}
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../utils.f}
+
+\subsubsection{timer.f}
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../timer.f}
+
+\subsubsection{i2c.f}
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../i2c.f}
+
+\subsubsection{lcd.f}
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../lcd.f}
+
+\subsubsection{ir\_receiver.f}
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../ir_receiver.f}
+
+\subsubsection{lookup\_table.f}
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../lookup_table.f}
+
+\subsubsection{main.f}
+\VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../main.f}
 
 \printbibliography
 \end{document}
