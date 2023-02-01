@@ -7,7 +7,7 @@ The proposed project consists of using an IR receiver to capture commands sent b
 </div>
 
 ---
-> **IMPORTANT**: A complete overview of the project, including the necessary hardware, is available in [documentation.pdf](docs/documentation.pdf).
+> **IMPORTANT**: A complete overview of the project, including the necessary hardware, is available in [documentation.pdf](docs/documentation.pdf). You should read it **before** running the project.
 ---
 
 ## Prerequisites
