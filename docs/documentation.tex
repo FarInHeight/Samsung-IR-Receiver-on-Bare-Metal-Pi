@@ -103,8 +103,8 @@ It  was released in June 2019\cite{Rpi4} and replaced the well-known \textbf{Ras
 
 \begin{figure}[h]
     \centering
-    \subfigure[]{\includegraphics[width=7cm]{pi4}} 
-    \subfigure[]{\includegraphics[width=5.52cm]{GPIO-Pinout-Diagram-2}} 
+    \subfigure[Hardware]{\includegraphics[width=7cm]{pi4}} 
+    \subfigure[40-pin Header]{\includegraphics[width=5.52cm]{GPIO-Pinout-Diagram-2}} 
     \caption{Raspberry Pi 4 Model B}
 \end{figure}
 
@@ -619,6 +619,20 @@ After this necessary operation, without considering those files, all subsequent 
 
 \subsubsection{main.f}
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../main.f}
+
+\subsection{Possible improvements}
+
+The project could be extended to respond to IR signals, that is, to store the last sampled command and, through the use of a simple button (e.g. DAOKAI 4Pin button), decide when to send it to the TV using an IR transmitter (e.g. KY-005). \\
+In this way, the button acts as a trigger and the application is able to send and receive signals.
+
+\begin{figure}[ht]
+    \centering
+    \subfigure[KY-005]{\includegraphics[width=5cm]{ir_transmitter}} 
+    \subfigure[DAOKAI 4Pin button]{\includegraphics[width=5cm]{button.png}} 
+    \caption{Additional hardware}
+\end{figure}
+
+In addition to this improvement, one might consider using the Pi 4's green ACT LED to communicate with the user, for example, to signal that a command has been processed correctly or that something has gone wrong.
 
 \printbibliography
 \end{document}
