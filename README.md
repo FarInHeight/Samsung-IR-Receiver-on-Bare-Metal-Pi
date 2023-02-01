@@ -54,7 +54,7 @@ If you are using a Pi 3 Model B or Model B+, change the constant `PERI_BASE` in 
 
 After that, download `picocom` and `minicom`, load `pijFORTHos` into the micro SD card and change the shell `#!/bin/zsh` to your shell.
 
-Change execution permissions as
+Change the execution permissions as
 ```
 chmod u+x unify_and_uncomment.py
 chmod u+x create_program.sh
