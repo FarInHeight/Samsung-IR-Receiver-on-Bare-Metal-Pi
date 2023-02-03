@@ -554,7 +554,7 @@ In my case, the I2C slave address is 0x27.
 
 \subsubsection{How to run}
 
-Once you have downloaded the project, you can port it to \textbf{Raspberry Pi 3 Model B} and \textbf{Raspberry Pi 3 Model B+} by changing the \texttt{PERI\_BASE} constant to \texttt{3F000000}. \\
+Once you have downloaded the project, you can port it to \textbf{Raspberry Pi 3 Model B} and \textbf{Raspberry Pi 3 Model B+} by changing the \texttt{PERI\_BASE} constant to \texttt{0x3F000000} (\texttt{utils.f})\footnote{For the project to work, the boot files must also be changed}. \\
 After possibly performing this operation and reading the previous subsection, having changed if necessary the constant used to set the slave address into the word \texttt{INIT\_I2C} (\texttt{i2c.f}), you can run the script and load the program as follows:
 \begin{enumerate}
     \item execute \texttt{./create\_program.sh} and run 

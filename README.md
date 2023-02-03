@@ -50,7 +50,7 @@ i2cdetect -y 1
 ```
 
 and change the slave address (contained in `i2c.f`) accordingly.
-If you are using a Pi 3 Model B or Model B+, change the constant `PERI_BASE` in `utils.f` to `3F000000`.
+If you are using a Pi 3 Model B or Model B+, change the constant `PERI_BASE` in `utils.f` to `0x3F000000`[^pi3].
 
 After that, download `picocom` and `minicom`, load `pijFORTHos` into the micro SD card and change the shell `#!/bin/zsh` to your shell.
 
@@ -72,3 +72,5 @@ At this point you can disconnect the UART and enjoy the project.
 
 ## License
 [MIT License](LICENSE)
+
+[^pi3]: For the project to work, the boot files must also be changed
