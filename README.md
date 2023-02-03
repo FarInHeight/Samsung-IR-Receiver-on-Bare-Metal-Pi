@@ -16,7 +16,7 @@ Your micro SD card must contain the following files:
 - `bootcode.bin`;
 - `config.txt`;
 - `fixup.dat`;
-- `start4.elf}`;
+- `start4.elf`;
 - `kernel7.img` (which contains `pijFORTHos`);
 - `bcm2711-rpi-4-b.dtb`.
 
