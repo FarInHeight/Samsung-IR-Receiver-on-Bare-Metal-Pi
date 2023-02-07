@@ -128,10 +128,14 @@ BSC1 PERI_BASE + 1C +        CONSTANT CLKT
     ROT OR                          \ first_setting byte nibble_second_setting
     -ROT OR ;
 
+\ Returns the lower nibble of a byte.
+: >NIBBLE ( byte -- lower_nibble )
+    0F AND ;
+
 \ Divides a byte into two nibbles.
 : BYTE>NIBBLES ( byte -- lower_nibble upper_nibble )
-    DUP 0F AND                      \ Gets lower_nibble
-    SWAP 04 RSHIFT 0F AND ;         \ Gets upper_nibble
+    DUP >NIBBLE                     \ Gets lower_nibble
+    SWAP 04 RSHIFT >NIBBLE ;        \ Gets upper_nibble
 
 \ Sends a nibble to LCD aggregated with settings.
 : SEND_NIBBLE ( nibble truth_value -- )

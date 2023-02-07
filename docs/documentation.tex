@@ -589,9 +589,9 @@ Given the information on the previous pages, it should be clear how the project 
 \subsubsection{ANSI Compliance}
 JonesForth does not conform to ANSI\cite{ANSICompliance} standards, which means that some words do not behave as expected.
 
-For this reason, the first \texttt{jonesforth.f} file, which contains words such as \texttt{S"}, is loaded as the first file, to ensure that \texttt{OF} and \texttt{ENDOF} used in \texttt{lookup\_table.f} can function properly.
+For this reason, the first file \texttt{jonesforth.f}, which contains words such as \texttt{S"}, is loaded as the first file, to ensure that \texttt{OF} and \texttt{ENDOF} used in \texttt{lookup\_table.f} can function properly.
 
-After this necessary operation, without considering those files, all subsequent words are ANSI-compliant thanks to the \texttt{se-ans.f} file, created by Professor Daniele Peri.
+After this necessary operation, regardless of the files containing the above words, all subsequent words are ANSI-compliant thanks to the file \texttt{se-ans.f}, created by Professor Daniele Peri.
 
 \subsubsection{jonesforth.f}
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../jonesforth.f}

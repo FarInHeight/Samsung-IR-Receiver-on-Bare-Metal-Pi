@@ -76,13 +76,13 @@ PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 \ Creates mask for a given GPIO pin.
 : MASK ( gpio_pin_number -- mask )
     0A MOD                                   \ Offset (base 10) for gpio_pin_number in GPFSEL contents
-    DUP 01 LSHIFT +                          \ Multiplies by 3 to get the real offset 
+    DUP 2* +                                 \ Multiplies by 3 to get the real offset 
     07 SWAP LSHIFT INVERT ;                  \ Returns the mask
 
 \ Returns a configuration for a GPFSEL contents update given a functionality in 0-7 and a GPIO pin number.
 : CONFIGURATION ( functionality_number gpio_pin_number -- configuration_for_GPFSEL )
     0A MOD                                   \ Offset (base 10) for gpio_pin_number in GPFSEL contents
-    DUP 01 LSHIFT +                          \ Multiplies by 3 to get the real offset
+    DUP 2* +                                 \ Multiplies by 3 to get the real offset
     LSHIFT ;                                 \ Returns contents to update the functionality of a pin
 
 \ Configures a specific functionality for a GPIO pin given its number and the functionality in 0-7.

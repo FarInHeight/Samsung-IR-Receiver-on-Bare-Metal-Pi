@@ -73,7 +73,7 @@ VARIABLE COMMAND
 \ If value is -1 then add a 0, 1 otherwise.
 : ADD_BIT ( value -- )
     COMMAND @ 
-    1 LSHIFT SWAP                              \ Makes room for the new bit
+    2* SWAP                                    \ Makes room for the new bit
     1 =
     IF
         01 OR                                  \ Adds a 1 if it is a 1

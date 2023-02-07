@@ -55,7 +55,7 @@
         0 >=                    \ While there are nibbles to send
     WHILE
         2DUP RSHIFT
-        0F AND                  \ Gets the current nibble
+        >NIBBLE                 \ Gets the current nibble
         HEX>ASCII >LCD          \ Sends it to the LCD
         04 -                    \ Decrements the amount of current shift
     REPEAT 2DROP ;
