@@ -516,21 +516,10 @@ Your \texttt{config.txt} file must contain the following uncommented options:
 
 \begin{Verbatim}[breaklines=true, breakanywhere=true]
     dtparam=i2c_arm=on
-
-    dtparam=audio=on
-
-    [pi4]
-    dtoverlay=vc4-fkms-v3d
-    max_framebuffers=2
     enable_uart=1
-    dtoverlay=w1-gpio,gpiopin=26
-
-    [all]
-    enable_uart=1
-    dtoverlay=w1-gpio,gpiopin=26
 \end{Verbatim}
 
-They are all uncommented by default except for \texttt{enable\_uart=1} which enables the UART, and \texttt{dtparam=i2c\_arm=on} which enables the I$^2$C.
+which enable the I$^2$C and the UART, respectively.
 
 \subsubsection{How to get IIC LCD slave address}
 
@@ -538,7 +527,7 @@ For the project to work, it is important to know the correct slave address.
 
 A visual method to recognize the address is to analyze the expander structure as follows\cite{i2cLcd}:
 \begin{figure}[h]
-    \includegraphics[width=12.1cm]{i2c_lcd}
+    \includegraphics[width=14cm]{i2c_lcd}
     \centering
     \caption{PCF8574AT I/O expander}
 \end{figure}

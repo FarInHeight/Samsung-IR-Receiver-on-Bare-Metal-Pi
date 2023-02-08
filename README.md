@@ -24,20 +24,9 @@ And the `config.txt` file must contain the following uncommented options:
 
 ```
 dtparam=i2c_arm=on
-
-dtparam=audio=on
-
-[pi4]
-dtoverlay=vc4-fkms-v3d
-max_framebuffers=2
 enable_uart=1
-dtoverlay=w1-gpio,gpiopin=26
-
-[all]
-enable_uart=1
-dtoverlay=w1-gpio,gpiopin=26
 ```
-They are all uncommented by default except for `enable_uart=1` which enables the UART, and `dtparam=i2c_arm=on` which enables the IIC.
+which enable the IIC and the UART, respectively.
 
 ## How to run
 
