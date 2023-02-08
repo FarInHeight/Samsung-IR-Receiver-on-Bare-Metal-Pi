@@ -35,6 +35,7 @@ dtoverlay=w1-gpio,gpiopin=26
 enable_uart=1
 dtoverlay=w1-gpio,gpiopin=26
 ```
+They are all uncommented by default except for `enable_uart=1` which enables the UART, and `dtparam=i2c_arm=on` which enables the IIC.
 
 ## How to run
 
