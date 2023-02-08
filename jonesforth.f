@@ -9,9 +9,9 @@
 \ This file must be uploaded as the first one.
 
 \ We can use [ and ] to insert literals which are calculated at compile time.  
-\ (Recall that [ and ] are the FORTH words which switch into and out of immediate mode.)
+\ (Recall that [ and ] are the FORTH words that allow you to exit and enter compilation mode.)
 \ Within definitions, use [ ... ] LITERAL anywhere that '...' is a constant expression
-\ which you  would rather only compute once (at compile time, rather than calculating 
+\ which you would rather only compute once (at compile time, rather than calculating 
 \ it each time your word runs).
 
 \ Returns the ASCII code of ".
@@ -35,11 +35,11 @@
 \ its length on the stack, (length at the top of stack).  The space following S" is the 
 \ normal space between FORTH words and is not a part of the string.
 \ This is tricky to define because it has to do different things depending on whether
-\ we are compiling or in immediate mode.  (Thus the word is marked IMMEDIATE so it can
+\ we are compiling or in interpret mode.  (Thus the word is marked IMMEDIATE so it can
 \ detect this and do different things).
-\ In compile mode we apppend the string lenght and the string rounded up 4 bytes
+\ In compile mode we apppend the string length and the string rounded up 4 bytes
 \ to the current word.  
-\ In immediate mode there isn't a particularly good place to put the string, but in this
+\ In interpret mode there isn't a particularly good place to put the string, but in this
 \ case we put the string at HERE (but we _don't_ change HERE). This is meant as a 
 \ temporary location, likely to be overwritten soon after.
 : S" IMMEDIATE ( -- addr len )

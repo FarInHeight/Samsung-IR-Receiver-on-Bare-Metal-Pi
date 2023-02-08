@@ -41,10 +41,10 @@ sudo apt-get install i2c-tools
 i2cdetect -y 1
 ```
 
-and change the slave address (contained in `i2c.f`) accordingly.
+and change the slave address in `INIT_I2C` (contained in `i2c.f`) accordingly.
 If you are using a Pi 3 Model B or Model B+, change the constant `PERI_BASE` in `utils.f` to `0x3F000000`[^pi3].
 
-After that, download `picocom` and `minicom`, load `pijFORTHos` into the micro SD card and change the shell `#!/bin/zsh` to your shell.
+After that, download `picocom` and `minicom`, load `pijFORTHos` into the micro SD card and change the shell `#!/bin/zsh` to your shell (also change the python interpreter if needed).
 
 Change the execution permissions as
 ```

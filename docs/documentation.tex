@@ -70,10 +70,10 @@
         \Large\textbf{Computer Engineering} \\
         \vfill
         \Huge\textbf{Embedded Systems} \\[3mm]
-        \Large\textbf{IR Receiver Project} \\[1mm]
+        \Large\textbf{IR Receiver Project \\ on bare-metal Raspberry Pi 4 Model B} \\[1mm]
         \vfill
         By Davide Sferrazza\\
-        \today
+        February 20, 2023
     \end{center}
 \end{titlepage}
 
@@ -185,13 +185,13 @@ For convenience, I report the picture of the timings here:
 \begin{figure}[h]
     \centering
     \includegraphics[width=15cm]{8_samsung}
-    \caption{Samsung protocol}
+    \caption{Samsung protocol timings}
 \end{figure}
 
 \newpage
 
-\subsection{LCD1602}
-The LCD1602\cite{lcd, i2cLcd} is an industrial character LCD that can display $16 \times 2$ or 32 characters at the same time, with a display font of $5 \times 8$ dots. The principle of the LCD1602 liquid crystal display is to use the physical characteristics of the liquid crystal to control the display area by voltage,
+\subsection{LCD 1602}
+The LCD 1602\cite{lcd, i2cLcd} is an industrial character LCD that can display $16 \times 2$ or 32 characters at the same time, with a display font of $5 \times 8$ dots. The principle of the LCD 1602 liquid crystal display is to use the physical characteristics of the liquid crystal to control the display area by voltage,
 that is, the graphic can be displayed.
 \begin{figure}[h]
     \includegraphics[width=7cm]{lcd}
@@ -220,7 +220,7 @@ Pin assignments are summarized in this table:
 
 To properly read or write data, some timing constraints must be observed. \\
 Independently of whether we are reading or writing, the Enable signal must start its falling edge while DB$0$-DB$7$ are stable. If it is not, then erroneous data are sampled. 
-The read or write mode is chosen only by the RW signal, so only one case of these modes can be represented.
+The read or write mode is chosen only by the R/W signal, so only one case of these modes can be represented.
 \begin{figure}[h]
     \includegraphics[width=12cm]{lcd_writing_data}
     \centering
@@ -265,10 +265,10 @@ To transmit a logic high, the line is left floating, and the pull-up resistor pu
 The PCF8574AT I/O expander for I$^2$C-bus contains:
 \begin{itemize}
     \item 8-bit remote I/O pins (indicated as P0, P1, \dots, P7) used to transfer data;
-    \item 3 address pins (ndicated as A0, A1, A2) used to address the slave.
+    \item 3 address pins (indicated as A0, A1, A2) used to address the slave.
 \end{itemize}
 
-In this project, it is not necessary to read data from I$^2$C LCD, so only the writing mechanism will be described.
+In this project, it is not necessary to read data from the I$^2$C LCD, so only the writing mechanism will be described.
 
 \subsubsection{Writing mechanism}
 
@@ -288,14 +288,14 @@ In a reverse manner, a low-to-high transition on the SDA line while the SCL is h
     \caption{START and STOP conditions}
 \end{figure}
 
-A byte may either be a device address, register address, or data written a slave.
+A sent byte can be a device address, a register address, or data written to a slave.
 
 One data bit is transferred during each clock pulse. The data on the SDA line must remain stable during the HIGH period of the clock pulse as changes in the data line at this time will be interpreted as control signals. \\
-Any number of data bytes can be transferred from the master to slave between the START and STOP conditions. \\
+Any number of data bytes can be transferred from the master to the slave between the START and STOP conditions. \\
 Data is transferred starting from the MSB (Most Significant Bit).
 
-After each byte of data is transmitted, the master releases the SDA line to allow the slave-receiver to signal a successful transfer with an ACK (Acknowledge) or a failed transfer with a NACK (Not Acknowledge). \\
-The receiver sends an ACK bit if it pulls down the SDA line during the low phase of period 9 of SCL. If the SDA line remains high, a NACK is sent.
+After each byte of data has been transmitted, the master releases the SDA line to allow the slave-receiver to signal a successful transfer with an ACK (Acknowledge) or a failed transfer with a NACK (Not Acknowledge). \\
+The receiver sends an ACK bit if the SDA is stable low during the high phase of the 9th period  of the clock. If the SDA line remains high, a NACK is sent.
 
 \begin{figure}[h]
     \includegraphics[width=11cm]{ACK_NACK}
@@ -305,7 +305,7 @@ The receiver sends an ACK bit if it pulls down the SDA line during the low phase
 
 Thus, there are 6 steps for the writing mechanism:
 \begin{enumerate}
-    \item the master sends the START condition and slave address setting the
+    \item the master sends the START condition and the slave address setting the
     last bit of the address byte to logic 0 for the write mode;
     \item the slave sends an ACK bit;
     \item the master sends the register address of the register it wishes to write to;
@@ -321,7 +321,7 @@ Thus, there are 6 steps for the writing mechanism:
 \end{figure}
 
 All this work is done by the PCF8574AT interface.
-All we need to do is to send the data byte for pins P7 to P0.
+All we need to do is to send the data byte for pins P7 to P0 after the slave address has been set correctly.
 
 \subsubsection{PCF8574AT to LCD connection}
 The PCF8574AT expander is soldered to the LCD pins according to the following scheme:
@@ -452,7 +452,7 @@ Picocom is launched on the development machine through the command:
 
 It is launched with the same VCP (Virtual COM Port) parameters as the Pi UART:
 \begin{itemize}
-    \item \texttt{--b 115200}: 9600 bit/s bit rate;
+    \item \texttt{--b 115200}: 115200 bit/s bit rate;
     \item \texttt{/dev/cu.usbserial-A50285BI}: the serial UART device;
     \item \texttt{--send "ascii-xfr -sv -l100 -c10"}:
     
@@ -463,16 +463,16 @@ It is launched with the same VCP (Virtual COM Port) parameters as the Pi UART:
         \item \texttt{-sv}: verbose send mode;
         \item \texttt{-l100}: sets a 100 milliseconds delay after each line is sent,
         this usually gives enough time to run a command and be
-        ready for the next line in time
+        ready for the next line in time;
         \item \texttt{-c10}: waits 10 milliseconds between each character sent.
     \end{itemize}
-    \item \texttt{--imap delbs}: : allows the use of backspace to delete a character.
+    \item \texttt{--imap delbs}: allows the use of backspace to delete a character.
 \end{itemize}
 
 \subsection{Script}
 Since the serial UART has a limited operating speed, one way to speed up the loading of the entire project is to delete all comments and merge the files into a single file.
 
-As not everyone has a Unix-like system operating, the first part of the script (\texttt{create\_program.sh}) is made for Zsh, but can be easily changed to other shelsl because it simply prints the files to the stdout. 
+As not everyone has a Unix-like operating system, the first part of the script (\texttt{create\_program.sh}) is made for Zsh, but can be easily changed to other shells because it simply prints the files to the stdout. 
 
 \lstinputlisting[language=sh]{../create_program.sh}
 
@@ -543,18 +543,18 @@ Once the download is complete, you can simply type:
     i2cdetect -y 1 
 \end{Verbatim}
 Now, if the connection on the breadboard is correct, you should see the slave address in the center of the array. \\
-In my case, the I2C slave address is 0x27.
+In my case, the I$^2$C slave address is 0x27.
 
 \subsubsection{How to run}
 
 Once you have downloaded the project, you can port it to \textbf{Raspberry Pi 3 Model B} and \textbf{Raspberry Pi 3 Model B+} by changing the \texttt{PERI\_BASE} constant to \texttt{0x3F000000} (\texttt{utils.f})\footnote{For the project to work, the boot files must also be changed}. \\
-After possibly performing this operation and reading the previous subsection, having changed if necessary the constant used to set the slave address into the word \texttt{INIT\_I2C} (\texttt{i2c.f}), you can run the script and load the program as follows:
+After possibly performing this operation and reading the previous subsection, having changed if necessary the literal used to set the slave address into the word \texttt{INIT\_I2C} (\texttt{i2c.f}), you can run the script and load the program as follows:
 \begin{enumerate}
     \item execute \texttt{./create\_program.sh} and run 
         \begin{Verbatim}[breaklines=true, breakanywhere=true]
         picocom --b 115200 /dev/cu.usbserial-A50285BI --send "ascii-xfr -sv -l100 -c10" --imap delbs
         \end{Verbatim}
-    \item load the file \texttt{program.f} generated by the script using \keys{\ctrl + A} and \keys{\ctrl + S}, and write the path to the file, e.g. \texttt{./program.f};
+    \item load the file \texttt{program.f} generated by the script using \keys{\ctrl + A} and \keys{\ctrl + S}, and writing the path to the file, e.g. \texttt{./program.f};
     \item start the program by typing \texttt{MAIN} and pressing \keys{\return}.
 \end{enumerate}
 
