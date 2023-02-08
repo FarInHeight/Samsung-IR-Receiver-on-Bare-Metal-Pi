@@ -27,11 +27,13 @@ dtparam=i2c_arm=on
 
 dtparam=audio=on
 
+[pi4]
 dtoverlay=vc4-fkms-v3d
 max_framebuffers=2
 enable_uart=1
 dtoverlay=w1-gpio,gpiopin=26
 
+[all]
 enable_uart=1
 dtoverlay=w1-gpio,gpiopin=26
 ```
