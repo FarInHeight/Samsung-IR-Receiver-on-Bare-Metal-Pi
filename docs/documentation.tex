@@ -88,8 +88,8 @@ The proposed project consists of using an IR receiver to capture commands sent b
 This document is organized as follows:
 \begin{itemize}
     \item Firstly, I will discuss the hardware used for the implementation, by describing the physical architecture where the software will run and the external necessary harware components that will interact with it;
-    \item  Then, I will explain the environment used for project development and how to obtain the parameters needed for the project to function properly;
-    \item Lastly, I will illustate how the code was designed and organized.
+    \item  Then, I will explain the environment used for project development;
+    \item Lastly, I will illustate how the code was designed and organized and how to obtain the parameters needed for the project to function properly.
 \end{itemize}
 
 On the last pages you can find the entire code. It is also available online using GitHub (insert link). 
@@ -587,30 +587,39 @@ For this reason, the first file \texttt{jonesforth.f}, which contains words such
 After this necessary operation, regardless of the files containing the above words, all subsequent words are ANSI-compliant thanks to the file \texttt{se-ans.f}, created by Professor Daniele Peri.
 
 \subsubsection{jonesforth.f}
+This file contains the word definitions needed for creating strings in memory.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../jonesforth.f}
 
 \subsubsection{se-ans.f}
+This file contains some word definitions for ANSI compliance, created by Professor Daniele Peri.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../se-ans.f}
 
 \subsubsection{utils.f}
+This file contains general words used throughout the project to manage the reading and, possibly, writing of GPIO pin levels.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../utils.f}
 
 \subsubsection{timer.f}
+This file contains word definitions for reading values from the Raspberry Pi 4 Model B System Timer counter.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../timer.f}
 
 \subsubsection{i2c.f}
+This file contains word definitions to handle the I$^2$C communication with the LCD display.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../i2c.f}
 
 \subsubsection{lcd.f}
+This file contains word definitions to print hexadecimal numbers and strings on the LCD, as well as common control commands to clear the display and move the cursor.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../lcd.f}
 
 \subsubsection{ir\_receiver.f}
+This file contains word definitions that implement the protocol explained in the previous sections to capture commands sent from the remote controller to the IR receiver.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../ir_receiver.f}
 
 \subsubsection{lookup\_table.f}
+This file contains a simple mapping from the hexadecimal commands sampled by the IR receiver to the corresponding string printed on the pressed buttons.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../lookup_table.f}
 
 \subsubsection{main.f}
+This file contains the main program to be run at startup.
 \VerbatimInput[fontsize=\footnotesize, breaklines=true, breakanywhere=true]{../main.f}
 
 \subsection{Possible improvements}
@@ -618,7 +627,7 @@ After this necessary operation, regardless of the files containing the above wor
 The project could be extended to respond to IR signals, that is, to store the last sampled command and, through the use of a simple button (e.g. DAOKAI 4Pin button), decide when to send it to the TV using an IR transmitter (e.g. KY-005). \\
 In this way, the button acts as a trigger and the application is able to send and receive signals.
 
-\begin{figure}[ht]
+\begin{figure}[h]
     \centering
     \subfigure[KY-005]{\includegraphics[width=5cm]{ir_transmitter}} 
     \subfigure[DAOKAI 4Pin button]{\includegraphics[width=5cm]{button.png}} 

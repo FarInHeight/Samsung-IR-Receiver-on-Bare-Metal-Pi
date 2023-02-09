@@ -28,6 +28,27 @@ enable_uart=1
 ```
 which enable the IIC and the UART, respectively.
 
+## Code structure
+- `jonesforth.f`
+: This file contains the word definitions needed for creating strings in memory;
+- `se-ans.f`
+: This file contains some word definitions for ANSI compliance, created by Professor Daniele Peri;
+- `utils.f`
+: This file contains general words used throughout the project to manage the reading and, possibly, writing of GPIO pin levels;
+- `timer.f`
+: This file contains word definitions for reading values from the Raspberry Pi 4 Model B System Timer counter;
+- `i2c.f`
+: This file contains word definitions to handle the IIC communication with the LCD display;
+- `lcd.f`
+: This file contains word definitions to print hexadecimal numbers and strings on the LCD, as well as common control commands to clear the display and move the cursor;
+- `ir_receiver.f`
+: This file contains word definitions that implement the protocol explained in the previous sections to capture commands sent from the remote controller to the IR receiver;
+
+- `lookup_table.f`
+: This file contains a simple mapping from the hexadecimal commands sampled by the IR receiver to the corresponding string printed on the pressed buttons;
+- `main.f`
+: This file contains the main program to be run at startup.
+
 ## How to run
 
 To run the project, download the repository using
