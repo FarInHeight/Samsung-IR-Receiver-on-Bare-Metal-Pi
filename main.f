@@ -41,7 +41,7 @@ VARIABLE LAST_COMMAND
 
     BEGIN
         DETECT_COMMAND                      \ Detects the sampled command
-        DUP IF                              \ If it is a valid command
+        ?DUP IF                             \ If it is a valid command
             DUP
             LAST_COMMAND @
             <>                              \ Checks whether it is not equal to the last one
@@ -52,6 +52,8 @@ VARIABLE LAST_COMMAND
                 DUP LAST_COMMAND !          \ Stores the new command
                 RH_LINE2                    \ In the second line
                 LOOKUP PRINT_STRING         \ prints the new command as a string
+            ELSE
+                DROP                        \ drops the sampled command, otherwise
             THEN
         THEN
     AGAIN ;
