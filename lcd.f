@@ -1,8 +1,10 @@
-\ Creates constant for 0 ASCII code.
-30 CONSTANT 0ASCII
+\ Returns the ASCII code of A.
+: 'A' ( -- ascii_code )
+    [ CHAR A ] LITERAL ;
 
-\ Creates constant for A ASCII code.
-41 CONSTANT AASCII
+\ Returns the ASCII code of 0.
+: '0' ( -- ascii_code )
+    [ CHAR 0 ] LITERAL ;
 
 \ Sets up the LCD.
 \ By sending this command to the LCD, we set up the data interface to 4 bits, instead
@@ -41,10 +43,10 @@
 : HEX>ASCII ( 4_bit_number -- ascii_code )
     DUP 09 >
     IF                          \ If it is greater than 9, it is a letter
-        0A -                    \ Then subtracts 10 and adds the ASCII code of A
-        AASCII +
+        0A -                    \ Then subtracts 10
+        'A' +                   \ and adds the ASCII code of A
     ELSE
-        0ASCII +                \ Adds the ASCII code of 0 otherwise
+        '0' +                   \ Adds the ASCII code of 0 otherwise
     THEN ;
 
 \ Prints a hexadecimal number to the LCD.
