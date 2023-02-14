@@ -13,7 +13,7 @@ The proposed project consists of using an IR receiver to capture commands sent b
 
 <div align="center">
 
-| Pi 4 Model    |  KY-022 | FT232RL | IIC PCF8574T |
+| Pi 4 Model B  |  KY-022 | FT232RL | IIC PCF8574T |
 | :-----------: | :-----: | :-----: | :----------: |
 | GPIO 25       |    S    |         |              |
 | 3V3 power     |    +    |         |              |
