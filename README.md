@@ -6,6 +6,26 @@ The proposed project consists of using an IR receiver to capture commands sent b
     <img src="./images/project_photo.jpg" width="800" class="center" />
 </div>
 
+## Connections
+<div align="center">
+    <img src="./images/schematics.png" width="800" class="center" />
+</div>
+
+<div align="center">
+
+| Pi 4 Model    |  KY-022 | FT232RL | IIC PCF8574T |
+| :-----------: | :-----: | :-----: | :----------: |
+| GPIO 25       |    S    |         |              |
+| 3V3 power     |    +    |         |              |
+| GPIO 14 (TXD) |         |    RX   |              |
+| GPIO 15 (RXD) |         |    TX   |              |
+| 5V power      |         |         |      VCC     |
+| GPIO 2 (SDA)  |         |         |      SDA     |
+| GPIO 3 (SCL)  |         |         |      SCL     |
+| Ground        |    -    |   GND   |      GND     |
+
+</div>
+
 ---
 > **IMPORTANT**: A complete overview of the project, including the necessary hardware, is available in [documentation.pdf](docs/documentation.pdf). You should read it **before** running the project.
 ---
