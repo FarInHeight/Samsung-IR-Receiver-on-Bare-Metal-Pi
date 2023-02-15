@@ -1,4 +1,4 @@
-# Pi 4 IR Receiver
+# IR Receiver Project on bare-metal Raspberry Pi 4 Model B
 
 The proposed project consists of using an IR receiver to capture commands sent by a remote controller and displaying them on an LCD display, along with the name of the pressed buttons.
 
