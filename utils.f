@@ -46,7 +46,7 @@ FE000000    CONSTANT PERI_BASE
 \ Creates constant for alternate function 5.
 02          CONSTANT ALT5
 
-\ Creates constant for GPIO register base address.
+\ Creates constant for GPIO registers base address.
 PERI_BASE GPIO_OFFSET + CONSTANT GPIO_BASE
 
 \ Fetches the contents of the return stack.

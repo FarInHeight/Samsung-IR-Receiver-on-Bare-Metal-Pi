@@ -33,9 +33,9 @@ VARIABLE LAST_COMMAND
 \ The display is updated only when a new command is found.
 : MAIN ( -- )
     0 LAST_COMMAND !                        \ Resets the last sampled command
-    INIT_I2C                                \ Initialize the I2C interface
-    INIT_LCD                                \ Initialize the LCD
-    INIT_RECEIVER                           \ Initialize the receiver
+    INIT_I2C                                \ Initializes the I2C interface
+    INIT_LCD                                \ Initializes the LCD
+    INIT_RECEIVER                           \ Initializes the receiver
 
     QUOTE                                   \ Prints the quote
 

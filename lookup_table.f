@@ -4,54 +4,54 @@
 \ ENDCASE discard the value used for the lookup.
 : LOOKUP ( code -- address length )
     CASE 
-        7070205F OF S" POWER ON/OFF"        ENDOF
-        7070403F OF S" SOURCE"              ENDOF
-        70706897 OF S" HDMI"                ENDOF
-        7070106F OF S" ONE"                 ENDOF
-        7070502F OF S" TWO"                 ENDOF
-        7070304F OF S" THREE"               ENDOF
-        70700877 OF S" FOUR"                ENDOF
-        70704837 OF S" FIVE"                ENDOF
-        70702857 OF S" SIX"                 ENDOF
-        70701867 OF S" SEVEN"               ENDOF
-        70705827 OF S" EIGHT"               ENDOF
-        70703847 OF S" NINE"                ENDOF
-        7070443B OF S" ZERO"                ENDOF
-        70701A65 OF S" TTX/MIX"             ENDOF
-        7070641B OF S" PREVIOUS CHANNEL"    ENDOF
-        7070700F OF S" VOLUME UP"           ENDOF
-        70706817 OF S" VOLUME DOWN"         ENDOF
-        70707807 OF S" MUTE"                ENDOF
-        70706B14 OF S" CHANNEL LIST"        ENDOF
-        7070245B OF S" CHANNEL UP"          ENDOF
-        7070047B OF S" CHANNEL DOWN"        ENDOF
-        70704F30 OF S" SMART MODE"          ENDOF
-        70707906 OF S" GUIDE"               ENDOF
-        70702C53 OF S" MENU"                ENDOF
-        70706916 OF S" TOOLS"               ENDOF
-        70707C03 OF S" INFO"                ENDOF 
-        7070037C OF S" UP"                  ENDOF
-        7070433C OF S" DOWN"                ENDOF
-        7070532C OF S" LEFT"                ENDOF
-        7070235C OF S" RIGHT"               ENDOF
-        70700B74 OF S" OK/ENTER"            ENDOF
-        70705A25 OF S" EXIT"                ENDOF
-        70700D72 OF S" RETURN"              ENDOF
-        70701B64 OF S" RED"                 ENDOF
-        7070146B OF S" GREEN"               ENDOF
-        7070542B OF S" YELLOW"              ENDOF
-        7070344B OF S" BLUE"                ENDOF
-        707031CE OF S" FAMILY STORY"        ENDOF
-        70706718 OF S" SEARCH"              ENDOF
-        70707C83 OF S" 3D"                  ENDOF
-        70707E01 OF S" SUPPORT"             ENDOF
-        70707887 OF S" D (WHAT IS IT?)"     ENDOF
-        7070522D OF S" AD/SUBT."            ENDOF
-        7070512E OF S" PREVIOUS TRACK"      ENDOF
-        70700976 OF S" NEXT TRACK"          ENDOF
-        70704936 OF S" RECORD"              ENDOF
-        7070710E OF S" PLAY"                ENDOF
-        70702956 OF S" PAUSE"               ENDOF
-        7070314E OF S" STOP"                ENDOF
+        E0E040BF OF S" POWER ON/OFF"        ENDOF
+        E0E0807F OF S" SOURCE"              ENDOF
+        E0E0D12E OF S" HDMI"                ENDOF
+        E0E020DF OF S" ONE"                 ENDOF
+        E0E0A05F OF S" TWO"                 ENDOF
+        E0E0609F OF S" THREE"               ENDOF
+        E0E010EF OF S" FOUR"                ENDOF
+        E0E0906F OF S" FIVE"                ENDOF
+        E0E050AF OF S" SIX"                 ENDOF
+        E0E030CF OF S" SEVEN"               ENDOF
+        E0E0B04F OF S" EIGHT"               ENDOF
+        E0E0708F OF S" NINE"                ENDOF
+        E0E08877 OF S" ZERO"                ENDOF
+        E0E034CB OF S" TTX/MIX"             ENDOF
+        E0E0C837 OF S" PREVIOUS CHANNEL"    ENDOF
+        E0E0E01F OF S" VOLUME UP"           ENDOF
+        E0E0D02F OF S" VOLUME DOWN"         ENDOF
+        E0E0F00F OF S" MUTE"                ENDOF
+        E0E0D629 OF S" CHANNEL LIST"        ENDOF
+        E0E048B7 OF S" CHANNEL UP"          ENDOF
+        E0E008F7 OF S" CHANNEL DOWN"        ENDOF
+        E0E09E61 OF S" SMART MODE"          ENDOF
+        E0E0F20D OF S" GUIDE"               ENDOF
+        E0E058A7 OF S" MENU"                ENDOF
+        E0E0D22D OF S" TOOLS"               ENDOF
+        E0E0F807 OF S" INFO"                ENDOF 
+        E0E006F9 OF S" UP"                  ENDOF
+        E0E08679 OF S" DOWN"                ENDOF
+        E0E0A659 OF S" LEFT"                ENDOF
+        E0E046B9 OF S" RIGHT"               ENDOF
+        E0E016E9 OF S" OK/ENTER"            ENDOF
+        E0E0B44B OF S" EXIT"                ENDOF
+        E0E01AE5 OF S" RETURN"              ENDOF
+        E0E036C9 OF S" RED"                 ENDOF
+        E0E028D7 OF S" GREEN"               ENDOF
+        E0E0A857 OF S" YELLOW"              ENDOF
+        E0E06897 OF S" BLUE"                ENDOF
+        E0E0639C OF S" FAMILY STORY"        ENDOF
+        E0E0CE31 OF S" SEARCH"              ENDOF
+        E0E0F906 OF S" 3D"                  ENDOF
+        E0E0FC03 OF S" SUPPORT"             ENDOF
+        E0E0F10E OF S" D (WHAT IS IT?)"     ENDOF
+        E0E0A45B OF S" AD/SUBT."            ENDOF
+        E0E0A25D OF S" PREVIOUS TRACK"      ENDOF
+        E0E012ED OF S" NEXT TRACK"          ENDOF
+        E0E0926D OF S" RECORD"              ENDOF
+        E0E0E21D OF S" PLAY"                ENDOF
+        E0E052AD OF S" PAUSE"               ENDOF
+        E0E0629D OF S" STOP"                ENDOF
                     S" UNKNOWN COMMAND" ROT
     ENDCASE ;

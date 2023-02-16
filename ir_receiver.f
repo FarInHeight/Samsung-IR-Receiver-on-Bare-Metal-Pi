@@ -110,11 +110,12 @@ VARIABLE COMMAND
     20                                         \ Number of bits to be detected
     BEGIN
         1- DUP
+        0 >=
     WHILE                                      \ While there are bits to detect
         RECEIVER DETECT_BIT                    \ Detects the bit
-        DUP
+        ?DUP
         NOT IF                                 \ If it is not valid
-            2DROP
+            DROP
             0 EXIT                             \ returns 0 and exits
         THEN
         ADD_BIT                                \ adds the bit to the current command otherwise

@@ -1,7 +1,7 @@
 \ There are 8 Broadcom Serial Control (BSC) controllers, numbered from 0 to 7
 \ Only 6 of these masters can be used, because BSC masters 2 and 7 are not user-accessible.
 \ Since GPIO pins 2 and 3 are used, BSC1 is the reference master.
-804000 CONSTANT BSC1
+804000                      CONSTANT BSC1
 
 \ There are 8 I2C registers, each of which is at an address obtained by applying an
 \ offset to BSC1 (this process is the same for all BSCs).
